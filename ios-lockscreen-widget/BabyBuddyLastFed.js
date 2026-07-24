@@ -100,17 +100,17 @@ function addLine(stack, text, opts = {}) {
   return t;
 }
 
-// Adds a live, self-updating "<relative> ago" fragment. iOS re-renders the
-// relative date on its own between widget refreshes, so it stays in sync with the
-// clock (renders as e.g. "1 hr, 23 min ago").
-function addRelativeAgo(stack, date, font) {
+// Adds a live, self-updating relative time. iOS re-renders it on its own between
+// widget refreshes, so it stays in sync with the clock (renders as e.g.
+// "1 hr, 23 min"). No trailing " ago" — the self-sizing field reserves width, which
+// would leave a gap before any static suffix.
+function addRelativeTime(stack, date, font) {
   const d = stack.addDate(date);
   d.applyRelativeStyle();
   d.font = font;
   d.lineLimit = 1;
   d.minimumScaleFactor = 0.7;
-  const suffix = addLine(stack, " ago", { font });
-  return { date: d, suffix };
+  return d;
 }
 
 function buildWidget(feeding, errorText) {
@@ -163,7 +163,7 @@ function buildWidget(feeding, errorText) {
     row.addSpacer();
     const row2 = c.addStack();
     row2.addSpacer();
-    addRelativeAgo(row2, start, Font.boldSystemFont(12));
+    addRelativeTime(row2, start, Font.boldSystemFont(12));
     row2.addSpacer();
     c.addSpacer();
     return w;
@@ -185,7 +185,7 @@ function buildWidget(feeding, errorText) {
   line2.centerAlignContent();
   const bodyFont = Font.systemFont(12);
   if (amount) addLine(line2, `${amount} · `, { font: bodyFont });
-  addRelativeAgo(line2, start, bodyFont);
+  addRelativeTime(line2, start, bodyFont);
 
   return w;
 }
