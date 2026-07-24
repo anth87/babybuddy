@@ -1,55 +1,117 @@
 @use 'sass:color';
 
-// Theme variables.
+// Baby Saliba theme variables.
+// Adapted from the "Supahub" style reference: a light, airy, mostly-white
+// canvas anchored by a single vivid violet, rounded geometry, and the
+// Bricolage Grotesque / Inter type pairing.
 
-// Color system
+// Brand palette
+$voltage-violet: #862fe7;
+$ultra-violet: #5f259e;
+$lavender-field: #ebdafd;
+$midnight-ink: #111827;
+$graphite: #3f4654;
+$slate: #6b7589;
+$mist: #d8e0ea;
+$fog: #f1f5f9;
 
+// Color system (cool grays that match the reference)
 $white: #fff;
-$gray-100: #f8f9fa;
+$gray-100: #f1f5f9; // fog
 $gray-200: #e9ecef;
-$gray-300: #dee2e6;
+$gray-300: #d8e0ea; // mist
 $gray-400: #ced4da;
 $gray-500: #adb5bd;
-$gray-600: #6c757d;
-$gray-700: #495057;
-$gray-800: #343a40;
-$gray-900: #212529;
+$gray-600: #6b7589; // slate
+$gray-700: #3f4654; // graphite
+$gray-800: #1f2534;
+$gray-900: #111827; // midnight ink
 $black: #000;
 
-$primary: #37abe9;
+// Theme colors
+$primary: $voltage-violet;
+$secondary: $slate;
 $danger: #a72431;
 $error: $danger;
-$secondary: #ff8f00;
-$warning: #ffbe42;
 $success: #239556;
+$warning: #f59e0b;
+$info: $ultra-violet;
 $debug: #5abccc;
-$info: #44c4dd;
-$light: $gray-100;
-$dark: $gray-800;
+$light: $fog;
+$dark: $midnight-ink;
+
+// Body
+$body-bg: $white;
+$body-color: $midnight-ink;
+
+// Typography
+$font-family-sans-serif: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$headings-font-family: 'Bricolage Grotesque', #{$font-family-sans-serif};
+$headings-font-weight: 600;
+$headings-color: $midnight-ink;
+$font-weight-base: 400;
+$line-height-base: 1.6;
+
+// Links
+$link-color: $voltage-violet;
+$link-decoration: none;
+$link-hover-color: $ultra-violet;
+
+// Border radii (12px buttons, 24px cards, pills for chips/avatars)
+$border-radius: 0.75rem; // 12px
+$border-radius-sm: 0.5rem; // 8px
+$border-radius-lg: 1rem; // 16px
+$border-radius-xl: 1.5rem; // 24px
+$border-radius-xxl: 2.5rem; // 40px
+$border-radius-pill: 50rem;
+
+// Components
+$border-color: $mist;
+$component-active-color: $white;
+$component-active-bg: $primary;
+
+// Cards
+$card-bg: $white;
+$card-border-color: $mist;
+$card-border-radius: 1.5rem; // 24px
+$card-cap-bg: $white;
+$card-spacer-x: 1.5rem;
+$card-spacer-y: 1.5rem;
+
+// Buttons
+$btn-font-weight: 600;
+$btn-padding-y: 0.625rem;
+$btn-padding-x: 1.25rem;
+$btn-border-radius: 0.75rem;
+$btn-border-radius-sm: 0.5rem;
+$btn-border-radius-lg: 0.75rem;
+
+// Forms / inputs
+$input-border-color: $mist;
+$input-border-radius: 0.75rem;
+$input-border-radius-sm: 0.5rem;
+$input-border-radius-lg: 0.75rem;
+$input-focus-border-color: $lavender-field;
+
+// Dropdowns
+$dropdown-border-color: $mist;
+$dropdown-border-radius: 1rem;
+$dropdown-link-active-bg: $lavender-field;
+$dropdown-link-active-color: $midnight-ink;
+
+// Soft shadows (the reference avoids heavy elevation)
+$box-shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+$box-shadow: 0 8px 28px rgba(17, 24, 39, 0.08);
+$box-shadow-lg: 0 20px 40px rgba(124, 58, 237, 0.12);
 
 // Breadcrumbs
-
 $breadcrumb-padding-y: 0.75rem;
 $breadcrumb-padding-x: 1rem;
 
 // Carousels
-
 $carousel-dark-control-icon-filter: none;
 
-// Components
-
-$border-color: $gray-200;
-$component-active-color: $gray-400;
-$component-active-bg: $primary;
-
-// Links
-
-$link-color: $info;
-$link-decoration: none;
-$link-hover-color: color.adjust($link-color, $lightness: -15%);
-
-// Tables
-
+// Tables (light canvas)
 $table-cell-padding-y: 0.75rem;
 $table-cell-padding-x: 0.75rem;
-$table-striped-bg: $dark;
+$table-striped-bg: $fog;

@@ -41,3 +41,143 @@
 .page-link-icon {
     padding: var(--bs-pagination-padding-y) calc(var(--bs-pagination-padding-x) / 1.75);
 }
+
+// ===========================================================================
+// Baby Saliba design layer (adapted from the "Supahub" style reference).
+// A light, airy canvas anchored by a single vivid violet, rounded geometry,
+// and minimal elevation (borders and surface tone do the separation work).
+// ===========================================================================
+
+:root {
+    --brand-violet: #{$voltage-violet};
+    --brand-violet-deep: #{$ultra-violet};
+    --brand-lavender: #{$lavender-field};
+    --brand-mist: #{$mist};
+    --brand-fog: #{$fog};
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: $white;
+    color: $midnight-ink;
+}
+
+// Bricolage Grotesque display voice with signature tight tracking at size.
+h1, .h1, h2, .h2,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+    letter-spacing: -0.025em;
+}
+
+// --- Navigation ------------------------------------------------------------
+.navbar {
+    background-color: $white !important;
+    border-bottom: 1px solid $mist;
+    box-shadow: none;
+
+    .nav-link {
+        color: $graphite;
+        font-weight: 500;
+        border-radius: $border-radius;
+
+        &:hover,
+        &:focus {
+            color: $voltage-violet;
+        }
+    }
+
+    .nav-link.active,
+    .show > .nav-link {
+        color: $voltage-violet;
+        font-weight: 600;
+    }
+
+    .navbar-toggler {
+        border-color: $mist;
+    }
+}
+
+// --- Cards -----------------------------------------------------------------
+.card {
+    border: 1px solid $mist;
+    border-radius: $card-border-radius;
+    box-shadow: none;
+    background-color: $white;
+
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid $mist;
+        font-weight: 600;
+    }
+}
+
+// --- Buttons ---------------------------------------------------------------
+.btn {
+    font-weight: 600;
+}
+
+.btn-primary {
+    box-shadow: rgba(11, 61, 121, 0.16) 0 0 0 1px inset;
+
+    &:hover,
+    &:focus {
+        background-color: $ultra-violet;
+        border-color: $ultra-violet;
+    }
+}
+
+.btn-outline-primary {
+    border-color: $voltage-violet;
+    color: $voltage-violet;
+
+    &:hover {
+        background-color: $voltage-violet;
+        color: $white;
+    }
+}
+
+// --- Chips / badges / pills ------------------------------------------------
+.badge {
+    border-radius: $border-radius-pill;
+    font-weight: 600;
+}
+
+// --- Forms -----------------------------------------------------------------
+.form-control,
+.form-select {
+    border-color: $mist;
+
+    &:focus {
+        border-color: $lavender-field;
+        box-shadow: 0 0 0 0.2rem rgba(134, 47, 231, 0.15);
+    }
+}
+
+// --- Tables ----------------------------------------------------------------
+.table {
+    --bs-table-hover-bg: #{$fog};
+}
+
+// --- Breadcrumb ------------------------------------------------------------
+.breadcrumb {
+    background-color: transparent;
+    padding-left: 0;
+    padding-right: 0;
+
+    a {
+        color: $slate;
+
+        &:hover {
+            color: $voltage-violet;
+        }
+    }
+}
+
+// --- Links -----------------------------------------------------------------
+a {
+    transition: color 0.12s ease;
+}
+
+:focus-visible {
+    outline-color: $voltage-violet;
+}
