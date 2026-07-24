@@ -88,8 +88,8 @@ function formatAgo(fromDate) {
   secs -= h * 3600;
   const m = Math.floor(secs / 60);
 
-  if (d > 0) return h > 0 ? `${d}d${h}h` : `${d}d`;
-  if (h > 0) return m > 0 ? `${h}h${m}m` : `${h}h`;
+  if (d > 0) return h > 0 ? `${d}d ${h}h` : `${d}d`;
+  if (h > 0) return m > 0 ? `${h}h ${m}m` : `${h}h`;
   return `${m}m`;
 }
 
@@ -145,7 +145,7 @@ function buildWidget(feeding, errorText) {
   const clock = formatClock(start);
   const ago = formatAgo(start);
   const amount = formatAmount(feeding.amount);
-  const amountAgo = amount ? `${amount} · ${ago}` : `${ago} ago`;
+  const amountAgo = amount ? `${amount} · ${ago} ago` : `${ago} ago`;
 
   // --- inline: single line beside the clock ---
   if (family === "accessoryInline") {
