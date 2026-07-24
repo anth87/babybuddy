@@ -70,8 +70,9 @@ You should get `{"count": …, "results": [{"start": …, "amount": …, …}]}`
 
 - Lock-screen widgets are **small and tinted/monochrome** — no color, avatar, or
   large card layout.
-- The **"X ago" elapsed time updates live** (it uses iOS's self-updating relative
-  date), so it stays in sync with the clock. But the underlying **feed data** only
+- The **elapsed time updates live** (it uses iOS's self-updating relative date, e.g.
+  "1 hr, 49 min"), so it stays in sync with the clock. But the underlying **feed data**
+  only
   refetches on **iOS's refresh cadence** (typically several minutes to ~15 min), so a
   brand-new feeding may take a few minutes to appear.
 - A widget is a **single tap target** — it can show data *or* act as one button,
