@@ -11,6 +11,9 @@
 # IDE configuration files.
 /.idea
 
+# Claude AI files
+/.claude
+
 # Node development dependencies.
 /node_modules
 
