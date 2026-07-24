@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="child-actions d-flex gap-2"
+<div class="child-actions d-flex gap-2{% if center_actions %} justify-content-center{% endif %}"
      role="group"
      aria-label="{% trans "Child actions" %}">
     {% if perms.core.view_child %}
@@ -20,13 +20,13 @@
         </a>
     {% endif %}
     {% if perms.core.change_child %}
-        <a class="btn d-none d-md-inline-block"
+        <a class="btn{% if not show_mobile_management %} d-none d-md-inline-block{% endif %}"
            href="{% url 'core:child-update' object.slug %}"
            title="{% trans "Edit" %}"
            role="button"><i class="icon-update" aria-hidden="true"></i></a>
     {% endif %}
     {% if perms.core.delete_child %}
-        <a class="btn d-none d-md-inline-block"
+        <a class="btn{% if not show_mobile_management %} d-none d-md-inline-block{% endif %}"
            href="{% url 'core:child-delete' object.slug %}"
            title="{% trans "Delete" %}"
            role="button"><i class="icon-delete" aria-hidden="true"></i></a>

@@ -9,24 +9,22 @@
 {% endblock %}
 {% block content %}
     <div class="child-detail-column">
-        <div class="row">
-            <div class="col-lg-4 col-md-6 pb-3 text-center">
-                {% if object.picture %}
-                    {% thumbnail '150x150' object.picture as thumb %}
-                        <img src="{{ thumb.url }}" class="child-photo img-fluid rounded-circle" />
-                    {% else %}
-                        <img src="{% static 'babybuddy/img/core/child-placeholder.png' %}"
-                             class="child-photo img-fluid rounded-circle" />
-                    {% endif %}
-                    <div class="child-name display-4">{{ object }}</div>
-                    <p class="lead">
-                        {% trans "Born" %} <span class="text-secondary">{{ object.birth_datetime }}</span>
-                        <br />
-                        {% trans "Age" %} <span class="text-secondary">{{ object.birth_datetime|child_age_string }}</span>
-                    </p>
-                    {% include 'dashboard/child_button_group.html' %}
-                    </div>
-                    <div class="col-lg-8 col-md-6 z-2">{% include 'timeline/_timeline.html' %}</div>
-                    </div>
-                    </div>
-                {% endblock %}
+        <div class="child-profile pb-4 text-center">
+            {% if object.picture %}
+                {% thumbnail '150x150' object.picture as thumb %}
+                    <img src="{{ thumb.url }}" class="child-photo img-fluid rounded-circle" />
+                {% else %}
+                    <img src="{% static 'babybuddy/img/core/child-placeholder.png' %}"
+                         class="child-photo img-fluid rounded-circle" />
+                {% endif %}
+                <div class="child-name display-4">{{ object }}</div>
+                <p class="lead">
+                    {% trans "Born" %} <span class="text-secondary">{{ object.birth_datetime }}</span>
+                    <br />
+                    {% trans "Age" %} <span class="text-secondary">{{ object.birth_datetime|child_age_string }}</span>
+                </p>
+                {% include 'dashboard/child_button_group.html' with center_actions=True show_mobile_management=True %}
+                </div>
+                <div class="child-timeline z-2">{% include 'timeline/_timeline.html' %}</div>
+                </div>
+            {% endblock %}

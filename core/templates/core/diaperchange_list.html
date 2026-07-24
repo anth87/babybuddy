@@ -18,7 +18,7 @@
     </h1>
     {% include 'babybuddy/filter.html' %}
     <div class="table-responsive">
-        <table class="table table-instances table-borderless table-striped table-hover align-middle">
+        <table class="table table-instances diaperchange-cards table-borderless table-striped table-hover align-middle">
             <thead>
                 <tr>
                     <th>{% trans "Actions" %}</th>
@@ -36,32 +36,37 @@
             <tbody>
                 {% for change in object_list %}
                     {% with prev_change=object_list|next:forloop.counter0 %}
-                        <tr>
-                            <td>
+                        <tr class="activity-card">
+                            <td class="activity-actions">
                                 <div class="btn-group btn-group-sm"
                                      role="group"
                                      aria-label="{% trans "Actions" %}">
                                     {% if perms.core.change_diaperchange %}
                                         <a href="{% url 'core:diaperchange-update' change.id %}"
-                                           class="btn btn-primary">
+                                           class="btn btn-primary"
+                                           title="{% trans "Edit" %}"
+                                           aria-label="{% trans "Edit" %}">
                                             <i class="icon-update" aria-hidden="true"></i>
                                         </a>
                                     {% endif %}
                                     {% if perms.core.delete_diaperchange %}
                                         <a href="{% url 'core:diaperchange-delete' change.id %}"
-                                           class="btn btn-danger">
+                                           class="btn btn-danger"
+                                           title="{% trans "Delete" %}"
+                                           aria-label="{% trans "Delete" %}">
                                             <i class="icon-delete" aria-hidden="true"></i>
                                         </a>
                                     {% endif %}
                                 </div>
                             </td>
-                            <th scope="row">{{ change.time|datetime_short }}</th>
+                            <th class="activity-time" scope="row">{{ change.time|datetime_short }}</th>
                             {% if not unique_child %}
-                                <td>
+                                <td class="activity-meta activity-child" data-label="{% trans "Child" %}">
                                     <a href="{% url 'core:child' change.child.slug %}">{{ change.child }}</a>
                                 </td>
                             {% endif %}
-                            <td class="text-center">
+                            <td class="activity-meta activity-contents text-center"
+                                data-label="{% trans "Contents" %}">
                                 {% if change.wet %}
                                     <span title="{% trans "Wet" %}">💦</span>
                                 {% endif %}
@@ -69,19 +74,24 @@
                                     <span title="{% trans "Solid" %}">💩</span>
                                 {% endif %}
                             </td>
-                            <td>{{ change.get_color_display }}</td>
-                            <td>{{ change.amount|default_if_none:"" }}</td>
-                            <td>
+                            <td class="activity-meta activity-color{% if not change.color %} activity-meta-empty{% endif %}"
+                                data-label="{% trans "Color" %}">{{ change.get_color_display }}</td>
+                            <td class="activity-meta activity-amount{% if change.amount == None %} activity-meta-empty{% endif %}"
+                                data-label="{% trans "Amount" %}">{{ change.amount|default_if_none:"" }}</td>
+                            <td class="activity-meta activity-previous{% if not prev_change %} activity-meta-empty{% endif %}"
+                                data-label="{% trans "Previous" %}">
                                 {% if prev_change %}
                                     {% blocktrans trimmed with time_ago=prev_change.time|timesince:change.time %}
                                         {{ time_ago }} ago
                                     {% endblocktrans %}
                                 {% endif %}
                             </td>
-                            <td>{% include "core/render_tag_list.html" with tags=change.tags.all %}</td>
+                            <td class="activity-meta activity-tags" data-label="{% trans "Tags" %}">
+                                {% include "core/render_tag_list.html" with tags=change.tags.all %}
+                            </td>
                         </tr>
                         {% if change.notes %}
-                            <tr class="{{ row_class }} row-details">
+                            <tr class="{{ row_class }} row-details activity-notes">
                                 <td colspan="8">
                                     <i class="icon-note me-2" aria-hidden="true"></i>{{ change.notes }}
                                 </td>
