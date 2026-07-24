@@ -79,20 +79,6 @@ function formatClock(date) {
   return df.string(date);
 }
 
-// Compact "time ago", e.g. "4h45m", "12m", "2d3h".
-function formatAgo(fromDate) {
-  let secs = Math.max(0, Math.floor((Date.now() - fromDate.getTime()) / 1000));
-  const d = Math.floor(secs / 86400);
-  secs -= d * 86400;
-  const h = Math.floor(secs / 3600);
-  secs -= h * 3600;
-  const m = Math.floor(secs / 60);
-
-  if (d > 0) return h > 0 ? `${d}d ${h}h` : `${d}d`;
-  if (h > 0) return m > 0 ? `${h}h ${m}m` : `${h}h`;
-  return `${m}m`;
-}
-
 // Baby Buddy stores amount as a plain number; display in mL to match the app.
 function formatAmount(amount) {
   if (amount == null || amount === "") return null;
@@ -112,6 +98,19 @@ function addLine(stack, text, opts = {}) {
   t.lineLimit = 1;
   t.minimumScaleFactor = 0.7;
   return t;
+}
+
+// Adds a live, self-updating "<relative> ago" fragment. iOS re-renders the
+// relative date on its own between widget refreshes, so it stays in sync with the
+// clock (renders as e.g. "1 hr, 23 min ago").
+function addRelativeAgo(stack, date, font) {
+  const d = stack.addDate(date);
+  d.applyRelativeStyle();
+  d.font = font;
+  d.lineLimit = 1;
+  d.minimumScaleFactor = 0.7;
+  const suffix = addLine(stack, " ago", { font });
+  return { date: d, suffix };
 }
 
 function buildWidget(feeding, errorText) {
@@ -143,9 +142,7 @@ function buildWidget(feeding, errorText) {
 
   const start = new Date(feeding.start);
   const clock = formatClock(start);
-  const ago = formatAgo(start);
   const amount = formatAmount(feeding.amount);
-  const amountAgo = amount ? `${amount} · ${ago} ago` : `${ago} ago`;
 
   // --- inline: single line beside the clock ---
   if (family === "accessoryInline") {
@@ -166,7 +163,7 @@ function buildWidget(feeding, errorText) {
     row.addSpacer();
     const row2 = c.addStack();
     row2.addSpacer();
-    addLine(row2, ago, { font: Font.boldSystemFont(13) });
+    addRelativeAgo(row2, start, Font.boldSystemFont(12));
     row2.addSpacer();
     c.addSpacer();
     return w;
@@ -184,7 +181,11 @@ function buildWidget(feeding, errorText) {
   addLine(header, `Last fed ${clock}`, { font: Font.mediumSystemFont(13) });
 
   w.addSpacer(2);
-  addLine(w, amountAgo, { font: Font.systemFont(12) });
+  const line2 = w.addStack();
+  line2.centerAlignContent();
+  const bodyFont = Font.systemFont(12);
+  if (amount) addLine(line2, `${amount} · `, { font: bodyFont });
+  addRelativeAgo(line2, start, bodyFont);
 
   return w;
 }
