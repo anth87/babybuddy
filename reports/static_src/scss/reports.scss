@@ -1,5 +1,11 @@
 .reports-list {
     .list-group-item {
-        color: $white;
+        color: $midnight-ink;
+
+        &:hover,
+        &:focus {
+            color: $midnight-ink;
+            background-color: $fog;
+        }
     }
 }

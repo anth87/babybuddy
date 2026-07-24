@@ -69,7 +69,7 @@ def feeding_amounts(instances):
     layout_args["title"] = "<b>" + _("Total Feeding Amount by Type") + "</b>"
     layout_args["xaxis"]["title"] = _("Date")
     layout_args["xaxis"]["rangeselector"] = utils.rangeselector_date()
-    layout_args["yaxis"]["title"] = _("Feeding amount")
+    layout_args["yaxis"]["title"] = _("Feeding amount (mL)")
 
     fig = go.Figure({"data": traces, "layout": go.Layout(**layout_args)})
     fig.update_layout(barmode="stack")

@@ -188,6 +188,7 @@ class BottleFeedingForm(CoreModelForm, TaggableModelForm):
     class Meta:
         model = models.Feeding
         fields = ["child", "start", "type", "amount", "notes", "tags"]
+        labels = {"amount": _("Amount (mL)")}
         widgets = {
             "child": ChildRadioSelect,
             "start": DateTimeInput(),
@@ -262,6 +263,7 @@ class FeedingForm(CoreModelForm, TaggableModelForm):
     class Meta:
         model = models.Feeding
         fields = ["child", "start", "end", "type", "method", "amount", "notes", "tags"]
+        labels = {"amount": _("Amount (mL)")}
         widgets = {
             "child": ChildRadioSelect,
             "start": DateTimeInput(),

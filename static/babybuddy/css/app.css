@@ -12919,7 +12919,11 @@ h2 .btn-success:focus,
 }
 
 .reports-list .list-group-item {
-  color: #fff;
+  color: #111827;
+}
+.reports-list .list-group-item:hover, .reports-list .list-group-item:focus {
+  color: #111827;
+  background-color: #f1f5f9;
 }
 
 @font-face {
