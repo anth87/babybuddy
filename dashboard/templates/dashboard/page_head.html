@@ -1,0 +1,14 @@
+{% load i18n %}
+{% now "G" as babyb_hour %}
+<div class="babyb-page-head">
+    <div class="babyb-eyebrow">{% now "l" %} · {% now "F j" %}</div>
+    <h1 class="babyb-greeting">
+        {% if babyb_hour|add:0 < 12 %}
+            {% blocktrans with name=user.first_name|default:user.get_username %}Good morning, {{ name }}{% endblocktrans %}
+        {% elif babyb_hour|add:0 < 18 %}
+            {% blocktrans with name=user.first_name|default:user.get_username %}Good afternoon, {{ name }}{% endblocktrans %}
+        {% else %}
+            {% blocktrans with name=user.first_name|default:user.get_username %}Good evening, {{ name }}{% endblocktrans %}
+        {% endif %}
+    </h1>
+</div>

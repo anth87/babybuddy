@@ -1,16 +1,17 @@
 {% if not empty or not hide_empty %}
     <div class="card card-dashboard card-{{ type }}">
         <div class="card-header">
-            <i class="icon-{{ type }} pull-left" aria-hidden="true"></i>
+            <span class="babyb-icon-tile card-tile" aria-hidden="true"><i class="icon-{{ type }}"></i></span>
             {% block header %}{% endblock %}
         </div>
         <div class="card-body">
-            <span class="card-title"><strong>
+            <span class="card-title">
                 {% block title %}{% endblock %}
-            </strong></span>
-            <div class="card-text">
-                {% block content %}{% endblock %}
-            </div>
+            </span>
+            {# djlint:off #}
+            {# card-text must stay on one line so the :empty CSS rule can hide the divider on cards without content #}
+            <div class="card-text">{% block content %}{% endblock %}</div>
+            {# djlint:on #}
         </div>
         {% block listgroup %}{% endblock %}
     </div>

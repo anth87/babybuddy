@@ -30,12 +30,15 @@ function _runInPipenv(command) {
   command.unshift("run");
   command = command.concat(process.argv.splice(3));
   return new Promise((resolve, reject) => {
-    spawn("pipenv", command, { stdio: "inherit" }).on("exit", function (code) {
-      if (code) {
-        reject();
-      }
-      resolve();
-    });
+    spawn("pipenv", command, { stdio: "inherit", shell: true }).on(
+      "exit",
+      function (code) {
+        if (code) {
+          reject();
+        }
+        resolve();
+      },
+    );
   });
 }
 
@@ -51,12 +54,15 @@ function _runInPipenv(command) {
  */
 function _runCommand(program, command) {
   return new Promise((resolve, reject) => {
-    spawn(program, command, { stdio: "inherit" }).on("exit", function (code) {
-      if (code) {
-        reject();
-      }
-      resolve();
-    });
+    spawn(program, command, { stdio: "inherit", shell: true }).on(
+      "exit",
+      function (code) {
+        if (code) {
+          reject();
+        }
+        resolve();
+      },
+    );
   });
 }
 
@@ -252,26 +258,29 @@ function test(cb) {
     "isolate",
   ];
   command = command.concat(process.argv.splice(3));
-  spawn("pipenv", command, { stdio: "inherit" }).on("exit", function (code) {
-    if (code === 0) {
-      // Run isolated tests.
-      config.testsConfig.isolated.forEach(function (test_name) {
-        try {
-          es(
-            "pipenv run python manage.py test --settings=babybuddy.settings.test " +
-              test_name,
-            { stdio: "inherit" },
-          );
-        } catch (error) {
-          console.error(error);
-          cb();
-          process.exit(1);
-        }
-      });
-    }
-    cb();
-    process.exit(code);
-  });
+  spawn("pipenv", command, { stdio: "inherit", shell: true }).on(
+    "exit",
+    function (code) {
+      if (code === 0) {
+        // Run isolated tests.
+        config.testsConfig.isolated.forEach(function (test_name) {
+          try {
+            es(
+              "pipenv run python manage.py test --settings=babybuddy.settings.test " +
+                test_name,
+              { stdio: "inherit" },
+            );
+          } catch (error) {
+            console.error(error);
+            cb();
+            process.exit(1);
+          }
+        });
+      }
+      cb();
+      process.exit(code);
+    },
+  );
 }
 
 /**
@@ -313,7 +322,7 @@ gulp.task("collectstatic", function (cb) {
   }
 
   command = command.concat(parameters);
-  spawn("pipenv", command, { stdio: "inherit" }).on("exit", cb);
+  spawn("pipenv", command, { stdio: "inherit", shell: true }).on("exit", cb);
 });
 
 gulp.task("compilemessages", () => {
@@ -365,7 +374,7 @@ gulp.task("runserver", function (cb) {
   /* Add parameters to command, removing empty values. */
   command = command.concat(parameters.filter(String));
 
-  spawn("pipenv", command, { stdio: "inherit" }).on("exit", cb);
+  spawn("pipenv", command, { stdio: "inherit", shell: true }).on("exit", cb);
 });
 
 gulp.task("generateschema", () => {

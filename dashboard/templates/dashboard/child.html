@@ -11,6 +11,7 @@
     <li class="breadcrumb-item active" aria-current="page">{% trans "Dashboard" %}</li>
 {% endblock %}
 {% block content %}
+    {% include 'dashboard/page_head.html' %}
     <div id="dashboard-child"
          class="row"
          data-masonry='{"percentPosition": true }'>

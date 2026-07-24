@@ -1,137 +1,153 @@
-@use 'sass:map';
-
-%card-header-text {
-    font-size: $h4-font-size;
-    font-weight: $headings-font-weight;
-    line-height: $headings-line-height;
-}
+// Baby Saliba dashboard cards.
+// White 24px-radius surfaces with tinted icon tiles, big Bricolage Grotesque
+// stat numbers, and hairline dividers. Color lives in the tile and chips, not
+// in card borders or headers.
 
 .card-dashboard {
     margin-bottom: $spacer;
 
     .card-header {
-        @extend %card-header-text;
-        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 20px 22px 0;
+        border-bottom: none;
+        background-color: transparent;
+        font-size: 13px;
+        font-weight: 600;
+        color: $slate;
+
+        a {
+            color: $slate;
+
+            &:hover {
+                color: $voltage-violet;
+            }
+        }
+
+        .card-tile i {
+            font-size: 17px;
+        }
     }
 
     .card-body {
+        padding: 14px 22px 22px;
+
         .card-title {
-            @extend %card-header-text;
+            display: block;
+            font-family: $headings-font-family;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.15;
+            color: $midnight-ink;
+
+            small {
+                display: block;
+                margin-top: 4px;
+                font-family: $font-family-sans-serif;
+                font-size: 13px;
+                font-weight: 400;
+                letter-spacing: 0;
+                color: $slate;
+            }
         }
 
         .card-text {
-            color: $text-muted;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid $hairline;
+            font-size: 14px;
+            color: $graphite;
+
+            &:empty {
+                display: none;
+            }
         }
 
         // Offset horizontal padding in dashboard cards with a carousel.
         .carousel {
-            margin-left: -$card-spacer-x;
-            margin-right: -$card-spacer-x;
-            padding-left: $card-spacer-x;
-            padding-right: $card-spacer-x;
+            margin-left: -22px;
+            margin-right: -22px;
+            padding-left: 22px;
+            padding-right: 22px;
         }
     }
 
     .list-group {
         .list-group-item {
-            color: $white;
+            padding: 14px 22px;
+            border-color: $hairline;
+            background-color: transparent;
+            color: $midnight-ink;
+
+            &:hover {
+                background-color: $fog;
+            }
+
+            &:last-child {
+                border-bottom-left-radius: $card-border-radius;
+                border-bottom-right-radius: $card-border-radius;
+            }
         }
     }
 }
 
+// Per-activity icon tile tints.
 .card-diaperchange,
 .card-medication {
-    border-color: map.get($theme-colors, 'danger');
-
-    .card-header, .card-header a {
-        background-color: map.get($theme-colors, 'danger');
-        color: map.get($theme-colors, 'light');
-    }
-
-    .card-body {
-        color: map.get($theme-colors, 'danger');
-    }
-
-    .progress {
-        height: $progress-height * 2;
-    }
-}
-
-.card-feeding,
-.card-pumping {
-    border-color: map.get($theme-colors, 'primary');
-
-    .card-header, .card-header a {
-        background-color: map.get($theme-colors, 'primary');
-        color: map.get($theme-colors, 'light');
-    }
-
-    .card-body {
-        color: map.get($theme-colors, 'primary');
-
-        // Last feeding method header in card.
-        .last-feeding-method {
-            font-size: 2em;
-        }
-    }
-
-    .progress {
-        height: $progress-height * 2;
+    .card-tile {
+        background-color: $peach-tint;
+        color: #dc5f05;
     }
 }
 
 .card-sleep {
-    border-color: map.get($theme-colors, 'secondary');
-
-    .card-header, .card-header a {
-        background-color: map.get($theme-colors, 'secondary');
-        color: map.get($theme-colors, 'light');
-    }
-}
-
-.card-statistics, .card-timer {
-    border-color: map.get($theme-colors, 'light');
-
-    .card-header {
-        background-color: map.get($theme-colors, 'light');
-        color: map.get($theme-colors, 'dark');
-
-        a {
-            color: map.get($theme-colors, 'dark');
-        }
-    }
-
-    .card-body {
-        color: map.get($theme-colors, 'light');
-
-        .container {
-            padding: 0;
-        }
+    .card-tile {
+        background-color: $indigo-tint;
+        color: $accent-indigo;
     }
 }
 
 .card-tummytime {
-    border-color: map.get($theme-colors, 'success');
-
-    .card-header, .card-header a {
-        background-color: map.get($theme-colors, 'success');
-        color: map.get($theme-colors, 'light');
-    }
-
-    .card-body {
-        color: map.get($theme-colors, 'success');
+    .card-tile {
+        background-color: $green-tint;
+        color: $accent-forest;
     }
 }
 
-// Medication Status Card
-.card-medication-status {
-    border-color: map.get($theme-colors, 'primary');
+// Statistics card: soft violet gradient surface.
+.card-statistics {
+    background: linear-gradient(150deg, #faf6ff, $lavender-tint);
+    border-color: #ecdffb;
 
-    .card-header, .card-header a {
-        background-color: map.get($theme-colors, 'primary');
-        color: map.get($theme-colors, 'light');
+    .card-tile {
+        background-color: $white;
     }
 
+    .card-body {
+        .card-title {
+            font-size: 30px;
+        }
+    }
+
+    &.card-dashboard .card-body .card-text {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 2px;
+        font-size: 13px;
+        color: $slate;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        filter: invert(1) grayscale(100%);
+        opacity: 0.55;
+    }
+}
+
+// Medication status card actions (kept from upstream, restyled lightly).
+.card-medication-status {
     .medication-status-item {
         &:last-child {
             border-bottom: none !important;
@@ -139,7 +155,7 @@
 
         .medication-name {
             font-weight: 600;
-            color: map.get($theme-colors, 'primary');
+            color: $midnight-ink;
         }
 
         .medication-actions {
@@ -161,6 +177,27 @@
 
         .badge {
             font-size: 0.75rem;
+        }
+    }
+}
+
+// Progress bars inside cards (diaper change types, breastfeeding, naps).
+// Some segments carry text labels, so they need a real height and a readable
+// font size (the markup's .lead class would otherwise blow the text up).
+.card-dashboard .progress {
+    height: 22px;
+    border-radius: $border-radius-pill;
+    background-color: $hairline;
+
+    .progress-bar {
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 22px;
+
+        // The trailing "empty" segment is transparent; its count needs a
+        // dark color to be visible on the white card.
+        &.bg-transparent {
+            color: $slate;
         }
     }
 }

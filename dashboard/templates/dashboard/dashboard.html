@@ -7,37 +7,37 @@
     <li class="breadcrumb-item fw-bold">{% trans "Dashboard" %}</li>
 {% endblock %}
 {% block content %}
+    {% include 'dashboard/page_head.html' %}
     <div class="row">
         <div class="col-lg-4 col-md-4 col-sm-12">{% card_timer_list %}</div>
         <div class="col-lg-8 col-md-8 col-sm-12">
             <div class="row">
                 {% for object in objects %}
-                    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-2 mb-4">
-                        <div class="card">
-                            <a class="text-center" href="{% url 'core:child' object.slug %}">
+                    <div class="col-12 mb-4">
+                        <div class="card babyb-child-card">
+                            <a class="babyb-child-photo-link"
+                               href="{% url 'core:child' object.slug %}">
                                 {% if object.picture %}
                                     {% thumbnail '300x300' object.picture as thumb %}
-                                        <img src="{{ thumb.url }}" class="child-photo img-fluid" />
+                                        <img src="{{ thumb.url }}" class="child-photo" alt="{{ object }}" />
                                     {% else %}
                                         <img src="{% static 'babybuddy/img/core/child-placeholder.png' %}"
-                                             class="child-photo img-fluid" />
+                                             class="child-photo"
+                                             alt="{{ object }}" />
                                     {% endif %}
-                                </a>
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">{{ object }}</h4>
-                                    <div class="card-text">
-                                        <p>
-                                            {% trans "Born" %} <span class="text-secondary">{{ object.birth_date }}</span>
-                                            <br />
-                                            {% trans "Age" %} <span class="text-secondary">{{ object.birth_date|timesince }}</span>
-                                        </p>
+                                    </a>
+                                    <div class="babyb-child-meta">
+                                        <h3 class="babyb-child-name">{{ object }}</h3>
+                                        <div class="babyb-child-facts">
+                                            <span>{% trans "Born" %} <strong>{{ object.birth_date }}</strong></span>
+                                            <span>{% trans "Age" %} <strong>{{ object.birth_date|timesince }}</strong></span>
+                                        </div>
                                         {% include 'dashboard/child_button_group.html' %}
                                     </div>
-                                </div>
+                                    </div>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    {% endblock %}
+                    </div>
+                {% endblock %}
