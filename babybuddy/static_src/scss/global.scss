@@ -2,9 +2,13 @@
 
 // Baby Buddy site-wide custom styles.
 
-// Remove extra margin below site breadcrumb.
-.breadcrumb {
-    margin-bottom: 0;
+// Global link transition and focus ring.
+a {
+    transition: color 0.12s ease;
+}
+
+:focus-visible {
+    outline-color: $voltage-violet;
 }
 
 // Extra-small button.
@@ -71,14 +75,17 @@ h1, .h1, h2, .h2,
 
 // --- Navigation ------------------------------------------------------------
 .navbar {
-    background-color: $white !important;
-    border-bottom: 1px solid $mist;
+    background-color: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid $cloud;
     box-shadow: none;
 
     .nav-link {
         color: $graphite;
         font-weight: 500;
-        border-radius: $border-radius;
+        font-size: 14px;
+        border-radius: 9px;
+        padding: 8px 10px;
 
         &:hover,
         &:focus {
@@ -86,35 +93,206 @@ h1, .h1, h2, .h2,
         }
     }
 
-    .nav-link.active,
     .show > .nav-link {
         color: $voltage-violet;
+    }
+
+    .nav-item.active > .nav-link,
+    .nav-link.active {
+        color: $voltage-violet;
         font-weight: 600;
+        background-color: $lavender-tint;
     }
 
     .navbar-toggler {
-        border-color: $mist;
+        border-color: $cloud;
     }
 
     // Brand logo shown as a rounded app-icon tile on the light bar.
-    .navbar-brand img {
-        height: 36px;
-        width: auto;
-        border-radius: 10px;
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: $headings-font-family;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: $midnight-ink;
+
+        img {
+            height: 34px;
+            width: 34px;
+            border-radius: 10px;
+            box-shadow: rgba(11, 61, 121, 0.16) 0 0 0 1px inset;
+        }
+    }
+}
+
+// Right-side nav action cluster (timer chip, Add button, user pill).
+.babyb-nav-actions {
+    gap: 9px;
+}
+
+// Live-timer chip: soft mint pill with a glowing green dot.
+.babyb-timer-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px !important;
+    border-radius: $border-radius-pill !important;
+    background-color: $fog;
+    color: $slate !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    white-space: nowrap;
+
+    .babyb-timer-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: $border-radius-pill;
+        background-color: $slate;
+        flex-shrink: 0;
+    }
+
+    &.has-active {
+        background-color: $mint-tint;
+        color: $chip-green !important;
+
+        .babyb-timer-dot {
+            background-color: $accent-green;
+            box-shadow: 0 0 0 3px rgba(18, 185, 129, 0.18);
+        }
+    }
+}
+
+// Compact violet Add button in the header.
+.babyb-nav-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    font-size: 12.5px;
+    white-space: nowrap;
+
+    i {
+        font-size: 13px;
+    }
+
+    &::after {
+        display: none; // no caret; the plus icon carries the affordance
+    }
+}
+
+// User pill: initial avatar + name inside a hairline pill.
+.babyb-user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px !important;
+    border: 1px solid $cloud;
+    border-radius: $border-radius-pill !important;
+    background-color: $white;
+    color: $midnight-ink !important;
+
+    .babyb-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: $border-radius-pill;
+        background: linear-gradient(140deg, #f0a5e0, $voltage-violet);
+        color: $white;
+        font-size: 13px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .babyb-user-name {
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .babyb-nav-actions {
+        align-items: flex-start;
+        gap: 4px;
+        padding: 8px 0;
+    }
+
+    .babyb-user-pill {
+        border: none;
+        padding-left: 0 !important;
     }
 }
 
 // --- Cards -----------------------------------------------------------------
 .card {
-    border: 1px solid $mist;
+    border: 1px solid $cloud;
     border-radius: $card-border-radius;
-    box-shadow: none;
+    box-shadow: 0 12px 30px -18px rgba(17, 24, 39, 0.18);
     background-color: $white;
 
     .card-header {
         background-color: transparent;
-        border-bottom: 1px solid $mist;
+        border-bottom: 1px solid $hairline;
         font-weight: 600;
+    }
+}
+
+// Reusable icon tile: rounded square holding a single glyph, tinted per activity.
+.babyb-icon-tile {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: $lavender-tint;
+    color: $voltage-violet;
+
+    &.tile-orange {
+        background-color: $peach-tint;
+        color: #dc5f05;
+    }
+
+    &.tile-indigo {
+        background-color: $indigo-tint;
+        color: $accent-indigo;
+    }
+
+    &.tile-green {
+        background-color: $green-tint;
+        color: $accent-forest;
+    }
+
+    &.tile-mint {
+        background-color: $mint-tint;
+        color: $chip-green;
+    }
+}
+
+// Soft status chips (wet / solid / tags).
+.babyb-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: $border-radius-pill;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: $lavender-tint;
+    color: $voltage-violet;
+
+    &.chip-green {
+        background-color: $mint-tint;
+        color: $chip-green;
+    }
+
+    &.chip-orange {
+        background-color: $peach-tint;
+        color: $chip-orange;
     }
 }
 
@@ -160,16 +338,207 @@ h1, .h1, h2, .h2,
     }
 }
 
+// --- List pages ------------------------------------------------------------
+// Page title row: heading left, action buttons right.
+.babyb-list-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 32px;
+    margin-bottom: 20px;
+
+    .babyb-list-actions {
+        display: inline-flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-left: auto;
+
+        .btn {
+            font-size: 14px;
+            padding: 10px 18px;
+        }
+    }
+}
+
+// Generic list headers that still keep inline buttons get a similar treatment.
+h1 .btn-success,
+h2 .btn-success {
+    background-color: $voltage-violet;
+    border-color: $voltage-violet;
+    color: $white;
+    font-size: 14px;
+    box-shadow: rgba(11, 61, 121, 0.16) 0 0 0 1px inset;
+
+    &:hover,
+    &:focus {
+        background-color: $ultra-violet;
+        border-color: $ultra-violet;
+        color: $white;
+    }
+}
+
+// Filter bar: soft inset panel with white input chips.
+[id='filter_form'] {
+    background-color: #f8f9fc;
+    border: 1px solid $cloud;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+
+    .form-control,
+    .form-select {
+        background-color: $white;
+        border-color: $cloud;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .col-form-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: $graphite;
+    }
+}
+
 // --- Tables ----------------------------------------------------------------
 .table {
     --bs-table-hover-bg: #{$fog};
+    --bs-table-striped-bg: #fafbfd;
+}
+
+// Instance tables live inside a rounded white card.
+.table-responsive:has(.table-instances) {
+    background-color: $white;
+    border: 1px solid $cloud;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px -20px rgba(17, 24, 39, 0.16);
+    overflow-x: auto;
+    margin-bottom: 18px;
+}
+
+.table-instances {
+    margin-bottom: 0;
+    font-size: 14px;
+
+    tbody {
+        tr {
+            border-top: 1px solid $hairline;
+        }
+
+        td,
+        th {
+            padding: 12px 16px;
+            border-bottom: none;
+            color: $graphite;
+        }
+    }
+
+    thead tr {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+
+        th {
+            color: $slate;
+            font-weight: 600;
+            padding: 14px 16px;
+            border-bottom: none;
+        }
+    }
+
+    tbody th[scope="row"] {
+        font-weight: 600;
+        color: $midnight-ink;
+        white-space: nowrap;
+    }
+
+    // Row action buttons: compact rounded squares.
+    .btn-group {
+        gap: 6px;
+
+        .btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px !important;
+            border: none;
+
+            i {
+                font-size: 14px;
+            }
+        }
+
+        .btn-danger {
+            background-color: #fdecec;
+            color: #e11d48;
+
+            &:hover {
+                background-color: #e11d48;
+                color: $white;
+            }
+        }
+    }
+}
+
+// --- Paginator -------------------------------------------------------------
+.pagination {
+    gap: 6px;
+    margin-top: 18px;
+
+    .page-link {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $cloud;
+        border-radius: 9px !important;
+        color: $graphite;
+        font-size: 14px;
+        background-color: $white;
+
+        &:hover {
+            color: $voltage-violet;
+            background-color: $lavender-tint;
+            border-color: $lavender-tint;
+        }
+    }
+
+    .page-item.active .page-link {
+        background-color: $voltage-violet;
+        border-color: $voltage-violet;
+        color: $white;
+        font-weight: 600;
+    }
+}
+
+// --- Page container --------------------------------------------------------
+// Center page content in a 1240px column like the design canvas.
+[id^="view-"] {
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 28px;
+}
+
+@include media-breakpoint-down(md) {
+    [id^="view-"] {
+        padding-inline: 16px;
+    }
 }
 
 // --- Breadcrumb ------------------------------------------------------------
 .breadcrumb {
     background-color: transparent;
-    padding-left: 0;
-    padding-right: 0;
+    max-width: 1240px;
+    margin-inline: auto;
+    margin-bottom: 0;
+    padding-inline: 28px;
+    font-size: 13px;
 
     a {
         color: $slate;
@@ -178,13 +547,109 @@ h1, .h1, h2, .h2,
             color: $voltage-violet;
         }
     }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: $mist;
+    }
+
+    .breadcrumb-item.fw-bold,
+    .breadcrumb-item.active {
+        color: $midnight-ink;
+    }
 }
 
-// --- Links -----------------------------------------------------------------
-a {
-    transition: color 0.12s ease;
+@include media-breakpoint-down(md) {
+    .breadcrumb {
+        padding-inline: 16px;
+    }
 }
 
-:focus-visible {
-    outline-color: $voltage-violet;
+// --- Auth (login / password reset) -----------------------------------------
+.babyb-auth {
+    position: relative;
+    min-height: calc(100vh - 8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    overflow: hidden;
+    background-color: $white;
+
+    // Violet-to-pink atmosphere orb behind the card. Decorative only.
+    .babyb-auth-orb {
+        position: absolute;
+        top: -140px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 640px;
+        height: 420px;
+        background: radial-gradient(
+            circle at 50% 40%,
+            rgba(134, 47, 231, 0.28),
+            rgba(226, 43, 164, 0.14) 45%,
+            rgba(255, 255, 255, 0) 70%
+        );
+        pointer-events: none;
+    }
+
+    .babyb-auth-inner {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .babyb-auth-head {
+        text-align: center;
+        margin-bottom: 26px;
+    }
+
+    .babyb-auth-logo {
+        border-radius: 18px;
+        box-shadow: 0 16px 32px -16px rgba(134, 47, 231, 0.55);
+    }
+
+    .babyb-auth-title {
+        font-size: 34px;
+        letter-spacing: -0.025em;
+        margin: 16px 0 4px;
+    }
+
+    .babyb-auth-sub {
+        font-size: 15px;
+        color: $slate;
+        margin: 0;
+    }
+
+    .babyb-auth-card {
+        background-color: $white;
+        border: 1px solid $cloud;
+        border-radius: $card-border-radius;
+        padding: 28px;
+        box-shadow: 0 24px 50px -28px rgba(17, 24, 39, 0.28);
+
+        .input-group-text {
+            background-color: $white;
+            border-color: $mist;
+            border-radius: $border-radius 0 0 $border-radius;
+        }
+
+        .form-control {
+            padding: 12px 14px;
+            font-size: 15px;
+        }
+
+        .btn {
+            padding: 13px;
+            font-size: 16px;
+        }
+    }
+
+    .babyb-auth-alt {
+        margin-top: 16px;
+        font-size: 14px;
+
+        a {
+            font-weight: 500;
+        }
+    }
 }

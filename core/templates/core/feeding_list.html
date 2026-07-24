@@ -7,16 +7,16 @@
     <li class="breadcrumb-item active" aria-current="page">{% trans "Feedings" %}</li>
 {% endblock %}
 {% block content %}
-    <h1>
+    <h1 class="babyb-list-head">
         {% trans "Feedings" %}
         {% if perms.core.add_feeding %}
-            <a href="{% url 'core:feeding-add' %}" class="btn btn-sm btn-success">
-                <i class="icon-feeding" aria-hidden="true"></i> {% trans "Add Feeding" %}
-            </a>
-            <a href="{% url 'core:bottle-feeding-add' %}"
-               class="btn btn-sm btn-success">
-                <i class="icon-feeding" aria-hidden="true"></i> {% trans "Add Bottle Feeding" %}
-            </a>
+            <span class="babyb-list-actions">
+                <a href="{% url 'core:feeding-add' %}" class="btn btn-primary">
+                    <i class="icon-add" aria-hidden="true"></i> {% trans "Add Feeding" %}
+                </a>
+                <a href="{% url 'core:bottle-feeding-add' %}"
+                   class="btn btn-outline-dark">{% trans "Add Bottle Feeding" %}</a>
+            </span>
         {% endif %}
     </h1>
     {% include 'babybuddy/filter.html' %}

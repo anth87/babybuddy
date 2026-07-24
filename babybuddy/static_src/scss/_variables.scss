@@ -15,6 +15,20 @@ $slate: #6b7589;
 $mist: #d8e0ea;
 $fog: #f1f5f9;
 
+// Soft supporting tints (borders, chips, icon tiles) from the design mock
+$cloud: #eceef3; // soft card/nav border
+$hairline: #f2f4f8; // faint inner divider
+$lavender-tint: #f3ebfd; // active-nav pill, violet icon tiles
+$peach-tint: #fdeee2; // diaper/orange icon tiles and chips
+$indigo-tint: #e9ecfb; // sleep icon tile
+$mint-tint: #eafaf3; // success chips (timer, wet)
+$green-tint: #e4f7ef; // tummy time icon tile
+$chip-green: #0f7a52; // success chip text
+$chip-orange: #b8560c; // orange chip text
+$accent-green: #12b981; // live timer dot
+$accent-indigo: #4f46e5; // sleep icon accent
+$accent-forest: #0f9d63; // tummy time icon accent
+
 // Color system (cool grays that match the reference)
 $white: #fff;
 $gray-100: #f1f5f9; // fog

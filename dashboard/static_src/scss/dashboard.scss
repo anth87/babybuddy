@@ -1,3 +1,98 @@
+// Baby Saliba dashboard page styles.
+
+// Greeting header: violet uppercase eyebrow over a Bricolage display line.
+.babyb-page-head {
+    margin-bottom: 24px;
+
+    .babyb-greeting {
+        font-size: 32px;
+        letter-spacing: -0.02em;
+        margin: 6px 0 0;
+    }
+}
+
+.babyb-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $voltage-violet;
+}
+
+// Square icon action buttons for a child (dashboard / timeline / reports / edit).
 .child-actions {
     flex-wrap: wrap;
+
+    .btn {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $cloud;
+        border-radius: 10px;
+        color: $graphite;
+        background-color: $white;
+
+        &:hover {
+            color: $voltage-violet;
+            background-color: $lavender-tint;
+            border-color: $lavender-tint;
+        }
+
+        i {
+            font-size: 17px;
+        }
+    }
+}
+
+// Child overview card: photo left, name and facts right, icon actions below.
+.babyb-child-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    flex-wrap: wrap;
+
+    .babyb-child-photo-link {
+        flex-shrink: 0;
+    }
+
+    .child-photo {
+        width: 96px;
+        height: 96px;
+        object-fit: cover;
+        border-radius: 20px;
+        display: block;
+    }
+
+    .babyb-child-meta {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .babyb-child-name {
+        font-size: 24px;
+        letter-spacing: -0.01em;
+        margin: 0;
+    }
+
+    .babyb-child-facts {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+        font-size: 14px;
+        color: $slate;
+
+        strong {
+            color: $midnight-ink;
+            font-weight: 500;
+        }
+    }
+
+    .child-actions {
+        margin-top: 14px;
+    }
 }

@@ -1,22 +1,26 @@
 {% extends "babybuddy/base.html" %}
-{% load static widget_tweaks %}
+{% load i18n static widget_tweaks %}
 {% block breadcrumb_nav %}{% endblock %}
 {% block page %}
-    <div id="view-{{ request.resolver_match.view_name }}" class="container">
-        <div class="text-center pt-3">
-            <img src="{% static "babybuddy/logo/icon-brand.png" %}"
-                 width="65"
-                 height="65"
-                 class="d-inline-block align-top rounded-3"
-                 alt="">
-            <h1 class="d-none d-md-inline-block display-4 ms-2">
-                <span class="text-primary">Baby</span> Saliba
-            </h1>
-        </a>
+    <div id="view-{{ request.resolver_match.view_name }}" class="babyb-auth">
+        <div class="babyb-auth-orb" aria-hidden="true"></div>
+        <div class="babyb-auth-inner">
+            <div class="babyb-auth-head">
+                <img src="{% static "babybuddy/logo/icon-brand.png" %}"
+                     width="60"
+                     height="60"
+                     class="babyb-auth-logo"
+                     alt="">
+                <h1 class="babyb-auth-title">
+                    <span class="text-primary">Baby</span> Saliba
+                </h1>
+                <p class="babyb-auth-sub">{% trans "Welcome back; sign in to keep tracking." %}</p>
+            </div>
+            <div class="babyb-auth-card">
+                {% include 'babybuddy/messages.html' %}
+                {% block content %}{% endblock %}
+            </div>
+            {% block below_card %}{% endblock %}
+        </div>
     </div>
-    <div class="p-4 rounded">
-        {% include 'babybuddy/messages.html' %}
-        {% block content %}{% endblock %}
-    </div>
-</div>
 {% endblock %}

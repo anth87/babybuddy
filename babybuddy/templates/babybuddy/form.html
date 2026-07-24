@@ -1,8 +1,11 @@
 {% load i18n widget_tweaks %}
 {# Load any form-javascript files #}
 {{ form.media.js }}
-<div class="container-fluid pb-5">
-    <form role="form" method="post" enctype="multipart/form-data">
+<div class="container-fluid pb-5 babyb-form-wrap">
+    <form role="form"
+          class="babyb-form-card"
+          method="post"
+          enctype="multipart/form-data">
         {% csrf_token %}
         {% if form.fieldsets %}
             {% for fieldset in form.hydrated_fielsets %}

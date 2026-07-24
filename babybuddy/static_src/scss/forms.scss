@@ -1,6 +1,8 @@
 @use 'sass:map';
 
-// Baby Buddy form style customizations.
+// Baby Buddy form style customizations, adapted to the Baby Saliba design:
+// forms sit in a white 24px-radius card with pill choice chips and a violet
+// submit action.
 
 // BB form fields do not follow typical BS4 style that enables this display.
 .invalid-feedback {
@@ -20,6 +22,71 @@
     pointer-events: none;
 }
 
+// Card wrapper around every model form.
+.babyb-form-wrap {
+    max-width: 760px;
+    margin-inline: auto;
+}
+
+.babyb-form-card {
+    background-color: $white;
+    border: 1px solid $cloud;
+    border-radius: $card-border-radius;
+    padding: 28px;
+    box-shadow: 0 14px 34px -22px rgba(17, 24, 39, 0.18);
+
+    .col-form-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: $midnight-ink;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 15px;
+        padding: 10px 14px;
+    }
+}
+
+// Choice pills: white bordered chips that fill violet when selected.
+.pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 8px;
+
+    > label.btn {
+        border-radius: $border-radius-pill;
+        border: 1px solid $mist;
+        background-color: $white;
+        color: $graphite;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 9px 16px;
+
+        &:hover {
+            border-color: $lavender-field;
+            background-color: $lavender-tint;
+            color: $voltage-violet;
+        }
+    }
+
+    .btn-check:checked + label.btn {
+        background-color: $voltage-violet;
+        border-color: $voltage-violet;
+        color: $white;
+        font-weight: 600;
+        box-shadow: rgba(11, 61, 121, 0.16) 0 0 0 1px inset;
+    }
+}
+
+// Only grow pill buttons when using a mobile.
+@include media-breakpoint-down(sm) {
+    .pill-container > label {
+        flex-grow: 1;
+    }
+}
+
 // Use a full width, fixed button on smaller screens.
 .submit-primary {
     display: block;
@@ -31,20 +98,6 @@
     bottom: 0;
     left: 0;
     z-index: 1030;
-}
-
-.pill-container {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 10px;
-    row-gap: 10px;
-}
-
-// Only grow pill buttons on when using a mobile
-@include media-breakpoint-down(sm) {
-    .pill-container>label {
-            flex-grow: 1;
-    }
 }
 
 // Tweak padding on form field help blocks.
@@ -62,7 +115,8 @@
         display: inline-block;
         border-radius: $btn-border-radius;
         width: auto;
-        padding: 0.25rem 0.5rem;
+        padding: 13px 26px;
+        font-size: 15px;
         position: relative;
     }
 }
@@ -78,7 +132,7 @@
 }
 
 .advanced-fields {
-    // removing this causes slight mis-alignment between fields in the details and the rest of the fields 
+    // removing this causes slight mis-alignment between fields in the details and the rest of the fields
     //on the form at the left hand side of the box
     padding-right: 0;
 }
