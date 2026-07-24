@@ -1,6 +1,6 @@
 {
-  "name": "Baby Buddy",
-  "short_name": "Baby Buddy",
+  "name": "Baby Saliba",
+  "short_name": "Baby Saliba",
   "icons": [
     {
       "src": "android-chrome-192x192.png?v=20211218",
@@ -16,8 +16,8 @@
   "lang": "en-US",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#37abe9",
-  "background_color": "#212529",
+  "theme_color": "#862fe7",
+  "background_color": "#ffffff",
   "shortcuts": [
     {
       "name": "Start a timer",
