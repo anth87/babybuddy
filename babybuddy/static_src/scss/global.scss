@@ -95,6 +95,13 @@ h1, .h1, h2, .h2,
     .navbar-toggler {
         border-color: $mist;
     }
+
+    // Brand logo shown as a rounded app-icon tile on the light bar.
+    .navbar-brand img {
+        height: 36px;
+        width: auto;
+        border-radius: 10px;
+    }
 }
 
 // --- Cards -----------------------------------------------------------------

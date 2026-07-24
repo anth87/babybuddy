@@ -11996,6 +11996,11 @@ h1, .h1, h2, .h2,
 .navbar .navbar-toggler {
   border-color: #d8e0ea;
 }
+.navbar .navbar-brand img {
+  height: 36px;
+  width: auto;
+  border-radius: 10px;
+}
 
 .card {
   border: 1px solid #d8e0ea;
