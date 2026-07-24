@@ -19,3 +19,10 @@ DATABASES = {
 }
 
 MEDIA_ROOT = os.path.join(DATA_DIR, "media")
+os.makedirs(MEDIA_ROOT, exist_ok=True)  # noqa: F405
+
+# There is no nginx or cloud storage in front of gunicorn on Railway, so let
+# the app serve uploaded media itself (see babybuddy/wsgi.py). Cloud storage,
+# when configured via AWS_STORAGE_BUCKET_NAME, takes precedence naturally
+# because uploads then bypass MEDIA_ROOT.
+SERVE_MEDIA_FROM_APP = not AWS_STORAGE_BUCKET_NAME  # noqa: F405
