@@ -27,7 +27,7 @@
                         {% if pumping.amount %}
                             <div class="babyb-meta-block">
                                 <div class="babyb-meta-label">{% trans "Amount" %}</div>
-                                <div class="babyb-meta-value">{{ pumping.amount }}</div>
+                                <div class="babyb-meta-value">{{ pumping.amount|floatformat:"0g" }}</div>
                             </div>
                         {% endif %}
                         {% if pumping.duration %}

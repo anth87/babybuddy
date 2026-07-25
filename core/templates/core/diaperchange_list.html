@@ -23,7 +23,7 @@
             {% with prev_change=object_list|next:forloop.counter0 %}
                 <article class="babyb-activity-card">
                     {% include 'core/_activity_card_head.html' with icon='icon-diaperchange' tile='' time=change.time|datetime_short unique_child=unique_child child=change.child has_prev=prev_change prev_dt=prev_change.time current_dt=change.time obj=change can_edit=perms.core.change_diaperchange edit_url_name='core:diaperchange-update' can_delete=perms.core.delete_diaperchange delete_url_name='core:diaperchange-delete' %}
-                    {% if change.wet or change.solid or change.color or change.amount != None or change.tags.all %}
+                    {% if change.wet or change.solid or change.color or change.notes or change.amount != None or change.tags.all %}
                         <div class="babyb-activity-meta">
                             {% if change.wet or change.solid %}
                                 <div class="babyb-meta-block">
@@ -47,10 +47,18 @@
                                     </span>
                                 </div>
                             {% endif %}
+                            {% if change.notes %}
+                                <div class="babyb-meta-block">
+                                    <div class="babyb-meta-label">{% trans "Notes" %}</div>
+                                    <span class="babyb-meta-chip">
+                                        <i class="icon-note" aria-hidden="true"></i>{{ change.notes }}
+                                    </span>
+                                </div>
+                            {% endif %}
                             {% if change.amount != None %}
                                 <div class="babyb-meta-block">
                                     <div class="babyb-meta-label">{% trans "Amount" %}</div>
-                                    <div class="babyb-meta-value">{{ change.amount }}</div>
+                                    <div class="babyb-meta-value">{{ change.amount|floatformat:"0g" }}</div>
                                 </div>
                             {% endif %}
                             {% if change.tags.all %}
@@ -61,7 +69,6 @@
                             {% endif %}
                         </div>
                     {% endif %}
-                    {% include 'core/_activity_card_note.html' with note=change.notes %}
                 </article>
             {% endwith %}
         {% empty %}

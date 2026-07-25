@@ -41,7 +41,7 @@
                             <div class="babyb-meta-block">
                                 <div class="babyb-meta-label">{% trans "Amount" %}</div>
                                 <div class="babyb-meta-value">
-                                    {% blocktrans trimmed with amount=feeding.amount %}
+                                    {% blocktrans trimmed with amount=feeding.amount|floatformat:"0g" %}
                                         {{ amount }} mL
                                     {% endblocktrans %}
                                 </div>
