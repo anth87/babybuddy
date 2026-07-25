@@ -7,104 +7,66 @@
     <li class="breadcrumb-item active" aria-current="page">{% trans "Diaper Changes" %}</li>
 {% endblock %}
 {% block content %}
-    <h1>
-        {% trans "Diaper Changes" %}
+    <div class="babyb-list-head">
+        <h1>{% trans "Diaper Changes" %}</h1>
         {% if perms.core.add_diaperchange %}
-            <a href="{% url 'core:diaperchange-add' %}"
-               class="btn btn-sm btn-success">
-                <i class="icon-diaperchange" aria-hidden="true"></i> {% trans "Add Diaper Change" %}
-            </a>
+            <div class="babyb-list-actions">
+                <a href="{% url 'core:diaperchange-add' %}" class="btn btn-primary">
+                    <i class="icon-diaperchange" aria-hidden="true"></i> {% trans "Add Diaper Change" %}
+                </a>
+            </div>
         {% endif %}
-    </h1>
+    </div>
     {% include 'babybuddy/filter.html' %}
-    <div class="table-responsive">
-        <table class="table table-instances diaperchange-cards table-borderless table-striped table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>{% trans "Actions" %}</th>
-                    <th>{% trans "Time" %}</th>
-                    {% if not unique_child %}
-                        <th>{% trans "Child" %}</th>
-                    {% endif %}
-                    <th class="text-center">{% trans "Contents" %}</th>
-                    <th>{% trans "Color" %}</th>
-                    <th>{% trans "Amount" %}</th>
-                    <th>{% trans "Previous" %}</th>
-                    <th>{% trans "Tags" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for change in object_list %}
-                    {% with prev_change=object_list|next:forloop.counter0 %}
-                        <tr class="activity-card">
-                            <td class="activity-actions">
-                                <div class="btn-group btn-group-sm"
-                                     role="group"
-                                     aria-label="{% trans "Actions" %}">
-                                    {% if perms.core.change_diaperchange %}
-                                        <a href="{% url 'core:diaperchange-update' change.id %}"
-                                           class="btn btn-primary"
-                                           title="{% trans "Edit" %}"
-                                           aria-label="{% trans "Edit" %}">
-                                            <i class="icon-update" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
-                                    {% if perms.core.delete_diaperchange %}
-                                        <a href="{% url 'core:diaperchange-delete' change.id %}"
-                                           class="btn btn-danger"
-                                           title="{% trans "Delete" %}"
-                                           aria-label="{% trans "Delete" %}">
-                                            <i class="icon-delete" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
+    <div class="babyb-activity-list">
+        {% for change in object_list %}
+            {% with prev_change=object_list|next:forloop.counter0 %}
+                <article class="babyb-activity-card">
+                    {% include 'core/_activity_card_head.html' with icon='icon-diaperchange' tile='' time=change.time|datetime_short unique_child=unique_child child=change.child has_prev=prev_change prev_dt=prev_change.time current_dt=change.time obj=change can_edit=perms.core.change_diaperchange edit_url_name='core:diaperchange-update' can_delete=perms.core.delete_diaperchange delete_url_name='core:diaperchange-delete' %}
+                    {% if change.wet or change.solid or change.color or change.amount != None or change.tags.all %}
+                        <div class="babyb-activity-meta">
+                            {% if change.wet or change.solid %}
+                                <div class="babyb-meta-block">
+                                    <div class="babyb-meta-label">{% trans "Contents" %}</div>
+                                    <div class="babyb-meta-chips">
+                                        {% if change.wet %}
+                                            <span class="babyb-meta-chip"><span class="babyb-meta-emoji" aria-hidden="true">💦</span>{% trans "Wet" %}</span>
+                                        {% endif %}
+                                        {% if change.solid %}
+                                            <span class="babyb-meta-chip"><span class="babyb-meta-emoji" aria-hidden="true">💩</span>{% trans "Solid" %}</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </td>
-                            <th class="activity-time" scope="row">{{ change.time|datetime_short }}</th>
-                            {% if not unique_child %}
-                                <td class="activity-meta activity-child" data-label="{% trans "Child" %}">
-                                    <a href="{% url 'core:child' change.child.slug %}">{{ change.child }}</a>
-                                </td>
                             {% endif %}
-                            <td class="activity-meta activity-contents text-center"
-                                data-label="{% trans "Contents" %}">
-                                {% if change.wet %}
-                                    <span title="{% trans "Wet" %}">💦</span>
-                                {% endif %}
-                                {% if change.solid %}
-                                    <span title="{% trans "Solid" %}">💩</span>
-                                {% endif %}
-                            </td>
-                            <td class="activity-meta activity-color{% if not change.color %} activity-meta-empty{% endif %}"
-                                data-label="{% trans "Color" %}">{{ change.get_color_display }}</td>
-                            <td class="activity-meta activity-amount{% if change.amount == None %} activity-meta-empty{% endif %}"
-                                data-label="{% trans "Amount" %}">{{ change.amount|default_if_none:"" }}</td>
-                            <td class="activity-meta activity-previous{% if not prev_change %} activity-meta-empty{% endif %}"
-                                data-label="{% trans "Previous" %}">
-                                {% if prev_change %}
-                                    {% blocktrans trimmed with time_ago=prev_change.time|timesince:change.time %}
-                                        {{ time_ago }} ago
-                                    {% endblocktrans %}
-                                {% endif %}
-                            </td>
-                            <td class="activity-meta activity-tags" data-label="{% trans "Tags" %}">
-                                {% include "core/render_tag_list.html" with tags=change.tags.all %}
-                            </td>
-                        </tr>
-                        {% if change.notes %}
-                            <tr class="{{ row_class }} row-details activity-notes">
-                                <td colspan="8">
-                                    <i class="icon-note me-2" aria-hidden="true"></i>{{ change.notes }}
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% endwith %}
-                {% empty %}
-                    <tr>
-                        <th colspan="8">{% trans "No diaper changes found." %}</th>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                            {% if change.color %}
+                                <div class="babyb-meta-block">
+                                    <div class="babyb-meta-label">{% trans "Color" %}</div>
+                                    <span class="babyb-meta-chip">
+                                        <span class="babyb-color-dot babyb-color-dot--{{ change.color }}"
+                                              aria-hidden="true"></span>{{ change.get_color_display }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                            {% if change.amount != None %}
+                                <div class="babyb-meta-block">
+                                    <div class="babyb-meta-label">{% trans "Amount" %}</div>
+                                    <div class="babyb-meta-value">{{ change.amount }}</div>
+                                </div>
+                            {% endif %}
+                            {% if change.tags.all %}
+                                <div class="babyb-meta-block">
+                                    <div class="babyb-meta-label">{% trans "Tags" %}</div>
+                                    <div class="babyb-meta-chips">{% include "core/render_tag_list.html" with tags=change.tags.all %}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% include 'core/_activity_card_note.html' with note=change.notes %}
+                </article>
+            {% endwith %}
+        {% empty %}
+            <div class="babyb-activity-empty">{% trans "No diaper changes found." %}</div>
+        {% endfor %}
     </div>
     {% include 'babybuddy/paginator.html' %}
 {% endblock %}

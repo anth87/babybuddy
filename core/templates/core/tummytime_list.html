@@ -7,78 +7,54 @@
     <li class="breadcrumb-item active" aria-current="page">{% trans "Tummy Time" %}</li>
 {% endblock %}
 {% block content %}
-    <h1>
-        {% trans "Tummy Time" %}
+    <div class="babyb-list-head">
+        <h1>{% trans "Tummy Time" %}</h1>
         {% if perms.core.add_tummytime %}
-            <a href="{% url 'core:tummytime-add' %}" class="btn btn-sm btn-success">
-                <i class="icon-tummytime" aria-hidden="true"></i> {% trans "Add Tummy Time" %}</a>
+            <div class="babyb-list-actions">
+                <a href="{% url 'core:tummytime-add' %}" class="btn btn-primary">
+                    <i class="icon-tummytime" aria-hidden="true"></i> {% trans "Add Tummy Time" %}
+                </a>
+            </div>
         {% endif %}
-    </h1>
+    </div>
     {% include 'babybuddy/filter.html' %}
-    <div class="table-responsive">
-        <table class="table table-instances table-borderless table-striped table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>{% trans "Actions" %}</th>
-                    <th>{% trans "Start" %}</th>
-                    <th>{% trans "End" %}</th>
-                    {% if not unique_child %}
-                        <th>{% trans "Child" %}</th>
-                    {% endif %}
-                    <th>{% trans "Duration" %}</th>
-                    <th>{% trans "Previous" %}</th>
-                    <th>{% trans "Milestone" %}</th>
-                    <th>{% trans "Tags" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for tummytime in object_list %}
-                    {% with prev_tummytime=object_list|next:forloop.counter0 %}
-                        <tr>
-                            <td>
-                                <div class="btn-group btn-group-sm"
-                                     role="group"
-                                     aria-label="{% trans "Actions" %}">
-                                    {% if perms.core.change_tummytime %}
-                                        <a href="{% url 'core:tummytime-update' tummytime.id %}"
-                                           class="btn btn-primary">
-                                            <i class="icon-update" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
-                                    {% if perms.core.delete_tummytime %}
-                                        <a href="{% url 'core:tummytime-delete' tummytime.id %}"
-                                           class="btn btn-danger">
-                                            <i class="icon-delete" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <th scope="row">{{ tummytime.start|datetime_short }}</th>
-                            <td>{{ tummytime.end|datetime_short }}</td>
-                            {% if not unique_child %}
-                                <td>
-                                    <a href="{% url 'core:child' tummytime.child.slug %}">{{ tummytime.child }}</a>
-                                </td>
-                            {% endif %}
-                            <td>{{ tummytime.duration|duration_string }}</td>
-                            <td>
-                                {% if prev_tummytime %}
-                                    {% blocktrans trimmed with time_ago=prev_tummytime.start|timesince:tummytime.start %}
-                                        {{ time_ago }} ago
-                                    {% endblocktrans %}
-                                {% endif %}
-                            </td>
-                            <td>{{ tummytime.milestone }}</td>
-                            <td>{% include "core/render_tag_list.html" with tags=tummytime.tags.all %}</td>
-                        </tr>
-                    {% endwith %}
-                {% empty %}
-                    <tr>
-                        <th colspan="8">{% trans "No tummy time entries found." %}</th>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="babyb-activity-list">
+        {% for tummytime in object_list %}
+            {% with prev_tummytime=object_list|next:forloop.counter0 %}
+                <article class="babyb-activity-card">
+                    {% include 'core/_activity_card_head.html' with icon='icon-tummytime' tile='babyb-activity-icon--green' time=tummytime.start|datetime_short unique_child=unique_child child=tummytime.child has_prev=prev_tummytime prev_dt=prev_tummytime.start current_dt=tummytime.start obj=tummytime can_edit=perms.core.change_tummytime edit_url_name='core:tummytime-update' can_delete=perms.core.delete_tummytime delete_url_name='core:tummytime-delete' %}
+                    <div class="babyb-activity-meta">
+                        {% if tummytime.end %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "End" %}</div>
+                                <div class="babyb-meta-value">{{ tummytime.end|datetime_short }}</div>
+                            </div>
+                        {% endif %}
+                        {% if tummytime.duration %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "Duration" %}</div>
+                                <div class="babyb-meta-value">{{ tummytime.duration|duration_string }}</div>
+                            </div>
+                        {% endif %}
+                        {% if tummytime.milestone %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "Milestone" %}</div>
+                                <div class="babyb-meta-value">{{ tummytime.milestone }}</div>
+                            </div>
+                        {% endif %}
+                        {% if tummytime.tags.all %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "Tags" %}</div>
+                                <div class="babyb-meta-chips">{% include "core/render_tag_list.html" with tags=tummytime.tags.all %}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% include 'core/_activity_card_note.html' with note=tummytime.notes %}
+                </article>
+            {% endwith %}
+        {% empty %}
+            <div class="babyb-activity-empty">{% trans "No tummy time entries found." %}</div>
+        {% endfor %}
     </div>
     {% include 'babybuddy/paginator.html' %}
 {% endblock %}

@@ -17,117 +17,225 @@
     }
 }
 
-// Diaper-change records become compact, timeline-like cards on small screens.
-@include media-breakpoint-down(sm) {
-    .table-responsive:has(.diaperchange-cards) {
-        overflow: visible;
-        background: transparent;
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
+// ===========================================================================
+// Activity card list (Diaper Changes and similar activity pages).
+// A vertical stack of rounded cards: icon tile + time + row actions, a wrapped
+// meta grid (contents / color / amount / tags), and an optional notes callout.
+// ===========================================================================
+.babyb-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.babyb-activity-card {
+    background-color: $white;
+    border: 1px solid $cloud;
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 10px 26px -18px rgba(17, 24, 39, 0.16);
+}
+
+.babyb-activity-card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.babyb-activity-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // Default (diaper changes): warm peach/orange tile.
+    background-color: $peach-tint;
+    color: #dc5f05;
+    font-size: 20px;
+
+    // Per-activity tints so each list reads distinctly.
+    &.babyb-activity-icon--violet {
+        background-color: $lavender-tint;
+        color: $voltage-violet;
     }
 
-    .diaperchange-cards {
-        display: block;
-        background: transparent;
+    &.babyb-activity-icon--indigo {
+        background-color: $indigo-tint;
+        color: $accent-indigo;
+    }
 
-        thead {
-            display: none;
-        }
+    &.babyb-activity-icon--green {
+        background-color: $green-tint;
+        color: $accent-forest;
+    }
 
-        tbody {
-            display: grid;
-            gap: 12px;
-        }
+    &.babyb-activity-icon--mint {
+        background-color: $mint-tint;
+        color: $chip-green;
+    }
+}
 
-        .activity-card {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 14px 18px;
-            padding: 16px;
-            background-color: $white !important;
-            border: 1px solid $cloud;
-            border-radius: 20px;
-            box-shadow: 0 10px 26px -18px rgba(17, 24, 39, 0.16);
-        }
+.babyb-activity-headmain {
+    flex: 1;
+    min-width: 0;
+}
 
-        .activity-actions,
-        .activity-time,
-        .activity-meta {
-            padding: 0;
-            border: 0;
-        }
+.babyb-activity-time {
+    font-size: 16px;
+    font-weight: 600;
+    color: $midnight-ink;
+    letter-spacing: -0.01em;
+}
 
-        .activity-time {
-            grid-column: 1;
-            grid-row: 1;
-            align-self: center;
-            font-size: 15px;
-            line-height: 1.3;
-        }
+.babyb-activity-sub {
+    font-size: 12.5px;
+    color: $slate;
+    margin-top: 2px;
 
-        .activity-actions {
-            grid-column: 2;
-            grid-row: 1;
-            justify-self: end;
-        }
+    a {
+        color: $slate;
+        font-weight: 600;
 
-        .activity-meta {
-            min-width: 0;
-            font-size: 14px;
-            line-height: 1.35;
-
-            &::before {
-                content: attr(data-label);
-                display: block;
-                margin-bottom: 3px;
-                color: $slate;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-            }
-        }
-
-        .activity-contents {
-            text-align: left !important;
-            font-size: 17px;
-        }
-
-        .activity-previous,
-        .activity-tags {
-            grid-column: 1 / -1;
-        }
-
-        .activity-meta-empty,
-        .activity-tags:empty {
-            display: none;
-        }
-
-        .activity-card:has(+ .activity-notes) {
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        .activity-notes {
-            display: block;
-            margin-top: -12px;
-            padding: 12px 16px;
-            background-color: $white !important;
-            border: 1px solid $cloud;
-            border-top: 0;
-            border-radius: 0 0 20px 20px;
-
-            td {
-                display: block;
-                padding: 0;
-                font-size: 13px;
-            }
-        }
-
-        tr:last-child.activity-card,
-        tr:last-child.activity-notes {
-            border-bottom: 1px solid $cloud;
+        &:hover {
+            color: $voltage-violet;
         }
     }
+
+    .babyb-dot-sep {
+        margin: 0 5px;
+        color: $mist;
+    }
+}
+
+.babyb-activity-cardactions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.babyb-card-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+
+    &.babyb-card-btn-edit {
+        background-color: $voltage-violet;
+        color: $white;
+        box-shadow: rgba(11, 61, 121, 0.16) 0 0 0 1px inset;
+
+        &:hover {
+            background-color: $ultra-violet;
+            color: $white;
+        }
+    }
+
+    &.babyb-card-btn-delete {
+        background-color: #fdecec;
+        color: #e11d48;
+
+        &:hover {
+            background-color: #e11d48;
+            color: $white;
+        }
+    }
+}
+
+.babyb-activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $hairline;
+}
+
+.babyb-meta-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #8b93a5;
+    margin-bottom: 7px;
+}
+
+.babyb-meta-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.babyb-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: $fog;
+    border-radius: $border-radius-pill;
+    padding: 4px 11px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: $graphite;
+}
+
+.babyb-meta-emoji {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.babyb-meta-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: $midnight-ink;
+}
+
+.babyb-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: $border-radius-pill;
+    box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.12) inset;
+    background-color: $slate;
+
+    &.babyb-color-dot--green { background-color: #3fae5a; }
+    &.babyb-color-dot--yellow { background-color: #e8b53a; }
+    &.babyb-color-dot--brown { background-color: #8a5a2b; }
+    &.babyb-color-dot--black { background-color: #111827; }
+}
+
+.babyb-activity-note {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    background-color: #faf7fe;
+    border: 1px solid #f0e7fb;
+    border-radius: 14px;
+    padding: 12px 14px;
+
+    i {
+        color: $voltage-violet;
+        flex-shrink: 0;
+        line-height: 1.5;
+    }
+}
+
+.babyb-activity-note-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: $graphite;
+}
+
+.babyb-activity-empty {
+    background-color: $white;
+    border: 1px solid $cloud;
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    color: $slate;
+    font-weight: 500;
 }

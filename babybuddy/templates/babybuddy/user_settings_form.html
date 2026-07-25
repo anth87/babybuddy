@@ -8,84 +8,337 @@
     <li class="breadcrumb-item active">{% trans "Settings" %}</li>
 {% endblock %}
 {% block content %}
-    <h1>{% trans "User Settings" %}</h1>
-    <div class="container-fluid">
+    <style>
+     .settings-redesign {
+         --sr-accent: #862fe7;
+         --sr-accent-dark: #5f259e;
+         --sr-ink: #111827;
+         --sr-muted: #6b7589;
+         --sr-faint: #8b93a5;
+         --sr-line: #edf0f5;
+         --sr-field-line: #e4e8f0;
+         --sr-field-bg: #fbfcfe;
+         font-family: 'Inter', system-ui, sans-serif;
+         color: var(--sr-ink);
+     }
+     .settings-redesign .sr-head { margin-bottom: 30px; }
+     .settings-redesign .sr-head h1 {
+         font-family: 'Bricolage Grotesque', sans-serif;
+         font-size: 38px; font-weight: 600; letter-spacing: -0.025em;
+         line-height: 1.05; margin: 0;
+     }
+     .settings-redesign .sr-head p {
+         font-size: 15px; color: var(--sr-muted);
+         margin: 8px 0 0; max-width: 560px; line-height: 1.5;
+     }
+     .settings-redesign .sr-layout {
+         display: grid; grid-template-columns: 256px 1fr;
+         gap: 36px; align-items: start;
+     }
+     .settings-redesign .sr-aside {
+         position: sticky; top: 20px;
+         display: flex; flex-direction: column; gap: 14px;
+     }
+     .settings-redesign .sr-profile {
+         background: #fff; border: 1px solid var(--sr-line); border-radius: 20px;
+         padding: 18px; display: flex; align-items: center; gap: 13px;
+     }
+     .settings-redesign .sr-avatar {
+         width: 46px; height: 46px; border-radius: 9999px; flex-shrink: 0;
+         background: linear-gradient(140deg, #f0a5e0, var(--sr-accent));
+         color: #fff; font-size: 17px; font-weight: 700;
+         display: flex; align-items: center; justify-content: center;
+     }
+     .settings-redesign .sr-profile-name { font-size: 15px; font-weight: 600; color: var(--sr-ink); }
+     .settings-redesign .sr-profile a { font-size: 12.5px; color: var(--sr-muted); text-decoration: none; }
+     .settings-redesign .sr-profile a:hover { color: var(--sr-accent); }
+     .settings-redesign .sr-nav {
+         background: #fff; border: 1px solid var(--sr-line); border-radius: 20px;
+         padding: 8px; display: flex; flex-direction: column; gap: 2px;
+     }
+     .settings-redesign .sr-nav a {
+         display: flex; align-items: center; gap: 12px;
+         padding: 10px 11px; border-radius: 13px;
+         color: var(--sr-ink); font-size: 14.5px; font-weight: 500;
+         text-decoration: none; transition: background .15s;
+     }
+     .settings-redesign .sr-nav a:hover { background: #f5f6f9; }
+     .settings-redesign .sr-nav a.active { background: #f3ebfd; color: var(--sr-accent); font-weight: 600; }
+     .settings-redesign .sr-nav-ico {
+         width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+         background: #f1f5f9; color: #3f4654;
+         display: flex; align-items: center; justify-content: center; font-size: 14px;
+     }
+     .settings-redesign .sr-nav a.active .sr-nav-ico { background: var(--sr-accent); color: #fff; }
+
+     .settings-redesign .sr-main { max-width: 680px; display: flex; flex-direction: column; gap: 20px; }
+     .settings-redesign .sr-card {
+         background: #fff; border: 1px solid var(--sr-line); border-radius: 24px;
+         padding: 24px; box-shadow: 0 12px 34px -26px rgba(17, 24, 39, 0.32);
+         scroll-margin-top: 20px;
+     }
+     .settings-redesign .sr-card-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+     .settings-redesign .sr-tile {
+         width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
+         display: flex; align-items: center; justify-content: center; font-size: 19px;
+     }
+     .settings-redesign .sr-tile.profile { background: #f3ebfd; color: var(--sr-accent); }
+     .settings-redesign .sr-tile.dashboard { background: #eafaf3; color: #0f7a52; }
+     .settings-redesign .sr-tile.api { background: #fdeee2; color: #dc5f05; }
+     .settings-redesign .sr-eyebrow {
+         font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+         text-transform: uppercase; color: var(--sr-faint);
+     }
+     .settings-redesign .sr-card-title {
+         font-family: 'Bricolage Grotesque', sans-serif;
+         font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;
+     }
+     .settings-redesign .sr-fields { display: flex; flex-direction: column; gap: 18px; }
+     .settings-redesign .sr-field { display: flex; flex-direction: column; gap: 8px; }
+     .settings-redesign .sr-field > label { font-size: 14px; font-weight: 600; color: #3f4654; margin: 0; }
+     .settings-redesign .sr-help { font-size: 12.5px; line-height: 1.55; color: var(--sr-faint); }
+     .settings-redesign .sr-error { font-size: 12.5px; line-height: 1.55; color: #e11d48; font-weight: 500; }
+
+     .settings-redesign .sr-input,
+     .settings-redesign .sr-select {
+         width: 100%; padding: 12px 14px;
+         border: 1px solid var(--sr-field-line); border-radius: 12px;
+         font-family: 'Inter', sans-serif; font-size: 15px; color: var(--sr-ink);
+         background: var(--sr-field-bg); outline: none;
+         transition: border-color .15s, box-shadow .15s;
+     }
+     .settings-redesign .sr-input:focus,
+     .settings-redesign .sr-select:focus {
+         border-color: var(--sr-accent); background: #fff;
+         box-shadow: 0 0 0 3px rgba(134, 47, 231, 0.15);
+     }
+     .settings-redesign .sr-select-wrap { position: relative; }
+     .settings-redesign .sr-select {
+         padding-right: 42px; appearance: none; -webkit-appearance: none; cursor: pointer;
+     }
+     .settings-redesign .sr-select-wrap::after {
+         content: ""; position: absolute; top: 50%; right: 17px;
+         width: 8px; height: 8px; border-right: 2px solid var(--sr-faint);
+         border-bottom: 2px solid var(--sr-faint);
+         transform: translateY(-70%) rotate(45deg); pointer-events: none;
+     }
+     .settings-redesign .is-invalid.sr-input,
+     .settings-redesign .is-invalid.sr-select { border-color: #e11d48; }
+
+     .settings-redesign .sr-toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
+     .settings-redesign .sr-toggle {
+         align-self: flex-start; display: inline-flex; align-items: center; gap: 12px;
+         cursor: pointer; margin: 0;
+     }
+     .settings-redesign .sr-switch {
+         width: 46px; height: 28px; border-radius: 9999px; background: #d8e0ea;
+         position: relative; display: inline-block; transition: background .18s;
+     }
+     .settings-redesign .sr-switch::after {
+         content: ""; position: absolute; top: 3px; left: 3px;
+         width: 22px; height: 22px; border-radius: 9999px; background: #fff;
+         box-shadow: 0 1px 3px rgba(17, 24, 39, 0.3); transition: transform .18s;
+     }
+     .settings-redesign .sr-toggle-text { font-size: 14px; font-weight: 600; color: var(--sr-faint); }
+     .settings-redesign .sr-toggle-text .sr-on { display: none; }
+     .settings-redesign .sr-toggle-input:checked + .sr-toggle .sr-switch { background: var(--sr-accent); }
+     .settings-redesign .sr-toggle-input:checked + .sr-toggle .sr-switch::after { transform: translateX(18px); }
+     .settings-redesign .sr-toggle-input:checked + .sr-toggle .sr-toggle-text { color: var(--sr-accent); }
+     .settings-redesign .sr-toggle-input:checked + .sr-toggle .sr-toggle-text .sr-on { display: inline; }
+     .settings-redesign .sr-toggle-input:checked + .sr-toggle .sr-toggle-text .sr-off { display: none; }
+     .settings-redesign .sr-toggle-input:focus-visible + .sr-toggle .sr-switch { box-shadow: 0 0 0 3px rgba(134, 47, 231, 0.25); }
+
+     .settings-redesign .sr-api-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+     .settings-redesign .sr-api-key {
+         flex: 1; min-width: 200px; overflow-x: auto; white-space: nowrap;
+         font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+         font-size: 13px; letter-spacing: 0.01em; color: #3f4654;
+         background: #f6f8fb; border: 1px solid var(--sr-line);
+         border-radius: 12px; padding: 12px 14px;
+     }
+     .settings-redesign .sr-btn-regen {
+         display: inline-flex; align-items: center; gap: 8px;
+         background: #fdecec; color: #e11d48; border: none; border-radius: 12px;
+         padding: 12px 16px; font-family: 'Inter', sans-serif; font-size: 14px;
+         font-weight: 600; cursor: pointer; white-space: nowrap;
+         transition: background .15s, color .15s;
+     }
+     .settings-redesign .sr-btn-regen:hover { background: #e11d48; color: #fff; }
+
+     .settings-redesign .sr-footer {
+         display: flex; align-items: center; gap: 12px;
+         justify-content: flex-end; flex-wrap: wrap; margin-top: 2px;
+     }
+     .settings-redesign .sr-btn-cancel {
+         background: #fff; color: #3f4654; border: 1px solid var(--sr-field-line);
+         border-radius: 12px; padding: 12px 20px; font-family: 'Inter', sans-serif;
+         font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none;
+         transition: background .15s;
+     }
+     .settings-redesign .sr-btn-cancel:hover { background: #f1f5f9; color: #3f4654; }
+     .settings-redesign .sr-btn-save {
+         display: inline-flex; align-items: center; gap: 8px;
+         background: var(--sr-accent); color: #fff; border: none; border-radius: 12px;
+         padding: 12px 22px; font-family: 'Inter', sans-serif; font-size: 15px;
+         font-weight: 600; cursor: pointer;
+         box-shadow: rgba(11, 61, 121, 0.16) 0 0 0 1px inset; transition: background .15s;
+     }
+     .settings-redesign .sr-btn-save:hover { background: var(--sr-accent-dark); color: #fff; }
+
+     .settings-redesign .sr-alert {
+         border-radius: 14px; padding: 14px 16px; margin-bottom: 20px;
+         font-size: 14px; background: #fdecec; border: 1px solid #f7c6cd; color: #b71533;
+     }
+
+     @media (max-width: 900px) {
+         .settings-redesign .sr-layout { grid-template-columns: 1fr; }
+         .settings-redesign .sr-aside { position: static; }
+         .settings-redesign .sr-head h1 { font-size: 30px; }
+     }
+    </style>
+    <div class="settings-redesign">
+        <div class="sr-head">
+            <h1>{% trans "User Settings" %}</h1>
+            <p>{% trans "Manage your profile, dashboard preferences, and API access." %}</p>
+        </div>
         <form role="form" method="post">
             {% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="alert alert-danger" role="alert">
+                    <div class="sr-alert" role="alert">
                         <strong>{% trans "Error" %}</strong>: {{ error }}
                     </div>
                 {% endfor %}
             {% elif form.errors %}
-                <div class="alert alert-danger" role="alert">
+                <div class="sr-alert" role="alert">
                     <strong>{% trans "Error" %}</strong>: {% trans "Some fields have errors. See below for details." %}
                 </div>
             {% endif %}
-            <fieldset>
-                <legend>{% trans "User Profile" %}</legend>
-                <div class="form-group row">
-                    {% with form_user.first_name as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_user.last_name as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_user.email as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_settings.language as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_settings.timezone as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_settings.pagination_count as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>{% trans "Dashboard" %}</legend>
-                <div class="form-group row">
-                    {% with form_settings.dashboard_refresh_rate as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_settings.dashboard_hide_empty as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-                <div class="form-group row">
-                    {% with form_settings.dashboard_hide_age as field %}
-                        {% include 'babybuddy/form_field.html' %}
-                    {% endwith %}
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>{% trans "API" %}</legend>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">{% trans "Key" %}</label>
-                    <div class="col-sm-10">
-                        <samp>{{ user.settings.api_key }}</samp>
-                        <button type="submit" name="api_key_regenerate" class="btn btn-danger btn-xs">{% trans "Regenerate" %}</button>
+            <div class="sr-layout">
+                <aside class="sr-aside">
+                    <div class="sr-profile">
+                        <span class="sr-avatar">{{ user.first_name|default:user.username|make_list|first|upper }}</span>
+                        <div style="min-width:0;">
+                            <div class="sr-profile-name">{{ user.first_name|default:user.username }}</div>
+                            <a href="#sr-profile">{% trans "View profile" %}</a>
+                        </div>
+                    </div>
+                    <nav class="sr-nav">
+                        <a href="#sr-profile" class="active">
+                            <span class="sr-nav-ico"><i class="icon-user" aria-hidden="true"></i></span>{% trans "User Profile" %}
+                        </a>
+                        <a href="#sr-dashboard">
+                            <span class="sr-nav-ico"><i class="icon-dashboard" aria-hidden="true"></i></span>{% trans "Dashboard" %}
+                        </a>
+                        <a href="#sr-api">
+                            <span class="sr-nav-ico"><i class="icon-lock" aria-hidden="true"></i></span>{% trans "API" %}
+                        </a>
+                    </nav>
+                </aside>
+                <div class="sr-main">
+                    <section class="sr-card" id="sr-profile">
+                        <div class="sr-card-head">
+                            <span class="sr-tile profile"><i class="icon-user" aria-hidden="true"></i></span>
+                            <div>
+                                <div class="sr-eyebrow">{% trans "Account" %}</div>
+                                <div class="sr-card-title">{% trans "User Profile" %}</div>
+                            </div>
+                        </div>
+                        <div class="sr-fields">
+                            <div class="sr-field">
+                                <label for="{{ form_user.first_name.id_for_label }}">{{ form_user.first_name.label }}</label>
+                                {% render_field form_user.first_name class="sr-input" placeholder=form_user.first_name.label %}
+                                {% for error in form_user.first_name.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label for="{{ form_user.last_name.id_for_label }}">{{ form_user.last_name.label }}</label>
+                                {% render_field form_user.last_name class="sr-input" placeholder=form_user.last_name.label %}
+                                {% for error in form_user.last_name.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label for="{{ form_user.email.id_for_label }}">{{ form_user.email.label }}</label>
+                                {% render_field form_user.email class="sr-input" placeholder="you@example.com" %}
+                                {% for error in form_user.email.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label for="{{ form_settings.language.id_for_label }}">{{ form_settings.language.label }}</label>
+                                <div class="sr-select-wrap">{% render_field form_settings.language class="sr-select" %}</div>
+                                {% for error in form_settings.language.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label for="{{ form_settings.timezone.id_for_label }}">{{ form_settings.timezone.label }}</label>
+                                <div class="sr-select-wrap">{% render_field form_settings.timezone class="sr-select" %}</div>
+                                {% for error in form_settings.timezone.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label for="{{ form_settings.pagination_count.id_for_label }}">{{ form_settings.pagination_count.label }}</label>
+                                <div class="sr-select-wrap">{% render_field form_settings.pagination_count class="sr-select" %}</div>
+                                {% for error in form_settings.pagination_count.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+                    </section>
+                    <section class="sr-card" id="sr-dashboard">
+                        <div class="sr-card-head">
+                            <span class="sr-tile dashboard"><i class="icon-dashboard" aria-hidden="true"></i></span>
+                            <div>
+                                <div class="sr-eyebrow">{% trans "Preferences" %}</div>
+                                <div class="sr-card-title">{% trans "Dashboard" %}</div>
+                            </div>
+                        </div>
+                        <div class="sr-fields">
+                            <div class="sr-field">
+                                <label for="{{ form_settings.dashboard_refresh_rate.id_for_label }}">{{ form_settings.dashboard_refresh_rate.label }}</label>
+                                <div class="sr-select-wrap">{% render_field form_settings.dashboard_refresh_rate class="sr-select" %}</div>
+                                {% if form_settings.dashboard_refresh_rate.help_text %}<div class="sr-help">{{ form_settings.dashboard_refresh_rate.help_text }}</div>{% endif %}
+                                {% for error in form_settings.dashboard_refresh_rate.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label>{{ form_settings.dashboard_hide_empty.label }}</label>
+                                {% render_field form_settings.dashboard_hide_empty class="sr-toggle-input" %}
+                                <label for="{{ form_settings.dashboard_hide_empty.id_for_label }}"
+                                       class="sr-toggle">
+                                    <span class="sr-switch"></span>
+                                    <span class="sr-toggle-text"><span class="sr-on">{% trans "On" %}</span><span class="sr-off">{% trans "Off" %}</span></span>
+                                </label>
+                                {% if form_settings.dashboard_hide_empty.help_text %}<div class="sr-help">{{ form_settings.dashboard_hide_empty.help_text }}</div>{% endif %}
+                                {% for error in form_settings.dashboard_hide_empty.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="sr-field">
+                                <label for="{{ form_settings.dashboard_hide_age.id_for_label }}">{{ form_settings.dashboard_hide_age.label }}</label>
+                                <div class="sr-select-wrap">{% render_field form_settings.dashboard_hide_age class="sr-select" %}</div>
+                                {% if form_settings.dashboard_hide_age.help_text %}<div class="sr-help">{{ form_settings.dashboard_hide_age.help_text }}</div>{% endif %}
+                                {% for error in form_settings.dashboard_hide_age.errors %}<div class="sr-error">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+                    </section>
+                    <section class="sr-card" id="sr-api">
+                        <div class="sr-card-head">
+                            <span class="sr-tile api"><i class="icon-lock" aria-hidden="true"></i></span>
+                            <div>
+                                <div class="sr-eyebrow">{% trans "Access" %}</div>
+                                <div class="sr-card-title">{% trans "API" %}</div>
+                            </div>
+                        </div>
+                        <div class="sr-field">
+                            <label>{% trans "Key" %}</label>
+                            <div class="sr-api-row">
+                                <code class="sr-api-key">{{ user.settings.api_key }}</code>
+                                <button type="submit" name="api_key_regenerate" class="sr-btn-regen">
+                                    <i class="icon-refresh" aria-hidden="true"></i>{% trans "Regenerate" %}
+                                </button>
+                            </div>
+                            <div class="sr-help">{% trans "Regenerating your key immediately invalidates the previous one. Update any connected devices afterward." %}</div>
+                        </div>
+                    </section>
+                    <div class="sr-footer">
+                        <a href="{% url 'babybuddy:root-router' %}" class="sr-btn-cancel">{% trans "Cancel" %}</a>
+                        <button type="submit" name="save_settings" class="sr-btn-save">
+                            <i class="icon-true" aria-hidden="true"></i>{% trans "Save changes" %}
+                        </button>
                     </div>
                 </div>
-            </fieldset>
+            </div>
             <input type="hidden" name="next" value="{% url 'babybuddy:user-settings' %}" />
-            <button type="submit" name="save_settings" class="btn btn-primary">{% trans "Submit" %}</button>
         </form>
     </div>
 {% endblock %}

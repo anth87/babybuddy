@@ -7,82 +7,52 @@
     <li class="breadcrumb-item active" aria-current="page">{% trans "Medication" %}</li>
 {% endblock %}
 {% block content %}
-    <h1>
-        {% trans "Medication" %}
+    <div class="babyb-list-head">
+        <h1>{% trans "Medication" %}</h1>
         {% if perms.core.add_medication %}
-            <a href="{% url 'core:medication-add' %}" class="btn btn-sm btn-success">
-                <i class="icon-medication" aria-hidden="true"></i> {% trans "Add Medication" %}
-            </a>
+            <div class="babyb-list-actions">
+                <a href="{% url 'core:medication-add' %}" class="btn btn-primary">
+                    <i class="icon-medication" aria-hidden="true"></i> {% trans "Add Medication" %}
+                </a>
+            </div>
         {% endif %}
-    </h1>
+    </div>
     {% include 'babybuddy/filter.html' %}
-    <div class="table-responsive">
-        <table class="table table-instances table-borderless table-striped table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>{% trans "Actions" %}</th>
-                    <th>{% trans "Date" %}</th>
-                    {% if not unique_child %}
-                        <th>{% trans "Child" %}</th>
-                    {% endif %}
-                    <th>{% trans "Medication Name" %}</th>
-                    <th>{% trans "Dosage" %}</th>
-                    <th>{% trans "Next Dose Interval" %}</th>
-                    <th>{% trans "Tags" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for medication in object_list %}
-                    <tr>
-                        <td>
-                            <div class="btn-group btn-group-sm"
-                                 role="group"
-                                 aria-label="{% trans "Actions" %}">
-                                {% if perms.core.change_medication %}
-                                    <a href="{% url 'core:medication-update' medication.id %}"
-                                       class="btn btn-primary">
-                                        <i class="icon-update" aria-hidden="true"></i>
-                                    </a>
-                                {% endif %}
-                                {% if perms.core.delete_medication %}
-                                    <a href="{% url 'core:medication-delete' medication.id %}"
-                                       class="btn btn-danger">
-                                        <i class="icon-delete" aria-hidden="true"></i>
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <th scope="row">{{ medication.time|datetime_short }}</th>
-                        {% if not unique_child %}
-                            <td>
-                                <a href="{% url 'core:child' medication.child.slug %}">{{ medication.child }}</a>
-                            </td>
-                        {% endif %}
-                        <td>{{ medication.name }}</td>
-                        <td>{{ medication.dosage }} {{ medication.get_dosage_unit_display }}</td>
-                        <td>
+    <div class="babyb-activity-list">
+        {% for medication in object_list %}
+            <article class="babyb-activity-card">
+                {% include 'core/_activity_card_head.html' with icon='icon-medication' tile='babyb-activity-icon--mint' time=medication.time|datetime_short unique_child=unique_child child=medication.child obj=medication can_edit=perms.core.change_medication edit_url_name='core:medication-update' can_delete=perms.core.delete_medication delete_url_name='core:medication-delete' %}
+                <div class="babyb-activity-meta">
+                    <div class="babyb-meta-block">
+                        <div class="babyb-meta-label">{% trans "Medication Name" %}</div>
+                        <div class="babyb-meta-value">{{ medication.name }}</div>
+                    </div>
+                    <div class="babyb-meta-block">
+                        <div class="babyb-meta-label">{% trans "Dosage" %}</div>
+                        <div class="babyb-meta-value">{{ medication.dosage }} {{ medication.get_dosage_unit_display }}</div>
+                    </div>
+                    <div class="babyb-meta-block">
+                        <div class="babyb-meta-label">{% trans "Next Dose Interval" %}</div>
+                        <div class="babyb-meta-value">
                             {% if medication.next_dose_interval %}
                                 {{ medication.next_dose_interval }}
                             {% else %}
                                 <span class="text-muted">{% trans "No interval set" %}</span>
                             {% endif %}
-                        </td>
-                        <td>{% include "core/render_tag_list.html" with tags=medication.tags.all %}</td>
-                    </tr>
-                    {% if medication.notes %}
-                        <tr class="{{ row_class }} row-details">
-                            <td colspan="7">
-                                <i class="icon-note me-2" aria-hidden="true"></i>{{ medication.notes }}
-                            </td>
-                        </tr>
+                        </div>
+                    </div>
+                    {% if medication.tags.all %}
+                        <div class="babyb-meta-block">
+                            <div class="babyb-meta-label">{% trans "Tags" %}</div>
+                            <div class="babyb-meta-chips">{% include "core/render_tag_list.html" with tags=medication.tags.all %}</div>
+                        </div>
                     {% endif %}
-                {% empty %}
-                    <tr>
-                        <th colspan="7">{% trans "No medication entries found." %}</th>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </div>
+                {% include 'core/_activity_card_note.html' with note=medication.notes %}
+            </article>
+        {% empty %}
+            <div class="babyb-activity-empty">{% trans "No medication entries found." %}</div>
+        {% endfor %}
     </div>
     {% include 'babybuddy/paginator.html' %}
 {% endblock %}

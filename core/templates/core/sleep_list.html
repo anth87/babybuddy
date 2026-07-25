@@ -7,84 +7,52 @@
     <li class="breadcrumb-item active" aria-current="page">{% trans "Sleep" %}</li>
 {% endblock %}
 {% block content %}
-    <h1>
-        {% trans "Sleep" %}
+    <div class="babyb-list-head">
+        <h1>{% trans "Sleep" %}</h1>
         {% if perms.core.add_sleep %}
-            <a href="{% url 'core:sleep-add' %}" class="btn btn-sm btn-success">
-                <i class="icon-sleep" aria-hidden="true"></i> {% trans "Add Sleep" %}
-            </a>
+            <div class="babyb-list-actions">
+                <a href="{% url 'core:sleep-add' %}" class="btn btn-primary">
+                    <i class="icon-sleep" aria-hidden="true"></i> {% trans "Add Sleep" %}
+                </a>
+            </div>
         {% endif %}
-    </h1>
+    </div>
     {% include 'babybuddy/filter.html' %}
-    <div class="table-responsive">
-        <table class="table table-instances table-borderless table-striped table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>{% trans "Actions" %}</th>
-                    <th>{% trans "Start" %}</th>
-                    <th>{% trans "End" %}</th>
-                    {% if not unique_child %}
-                        <th>{% trans "Child" %}</th>
-                    {% endif %}
-                    <th>{% trans "Duration" %}</th>
-                    <th>{% trans "Previous" %}</th>
-                    <th class="text-center">{% trans "Nap" %}</th>
-                    <th>{% trans "Tags" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sleep in object_list %}
-                    {% with prev_sleep=object_list|next:forloop.counter0 %}
-                        <tr>
-                            <td>
-                                <div class="btn-group btn-group-sm"
-                                     role="group"
-                                     aria-label="{% trans "Actions" %}">
-                                    {% if perms.core.change_sleep %}
-                                        <a href="{% url 'core:sleep-update' sleep.id %}" class="btn btn-primary">
-                                            <i class="icon-update" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
-                                    {% if perms.core.delete_sleep %}
-                                        <a href="{% url 'core:sleep-delete' sleep.id %}" class="btn btn-danger">
-                                            <i class="icon-delete" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <th scope="row">{{ sleep.start|datetime_short }}</th>
-                            <td>{{ sleep.end|datetime_short }}</td>
-                            {% if not unique_child %}
-                                <td>
-                                    <a href="{% url 'core:child' sleep.child.slug %}">{{ sleep.child }}</a>
-                                </td>
-                            {% endif %}
-                            <td>{{ sleep.duration|duration_string }}</td>
-                            <td>
-                                {% if prev_sleep %}
-                                    {% blocktrans trimmed with time_ago=prev_sleep.start|timesince:sleep.start %}
-                                        {{ time_ago }} ago
-                                    {% endblocktrans %}
-                                {% endif %}
-                            </td>
-                            <td class="text-center">{{ sleep.nap|bool_icon }}</td>
-                            <td>{% include "core/render_tag_list.html" with tags=sleep.tags.all %}</td>
-                        </tr>
-                        {% if sleep.notes %}
-                            <tr class="{{ row_class }} row-details">
-                                <td colspan="8">
-                                    <i class="icon-note me-2" aria-hidden="true"></i>{{ sleep.notes }}
-                                </td>
-                            </tr>
+    <div class="babyb-activity-list">
+        {% for sleep in object_list %}
+            {% with prev_sleep=object_list|next:forloop.counter0 %}
+                <article class="babyb-activity-card">
+                    {% include 'core/_activity_card_head.html' with icon='icon-sleep' tile='babyb-activity-icon--indigo' time=sleep.start|datetime_short unique_child=unique_child child=sleep.child has_prev=prev_sleep prev_dt=prev_sleep.start current_dt=sleep.start obj=sleep can_edit=perms.core.change_sleep edit_url_name='core:sleep-update' can_delete=perms.core.delete_sleep delete_url_name='core:sleep-delete' %}
+                    <div class="babyb-activity-meta">
+                        {% if sleep.end %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "End" %}</div>
+                                <div class="babyb-meta-value">{{ sleep.end|datetime_short }}</div>
+                            </div>
                         {% endif %}
-                    {% endwith %}
-                {% empty %}
-                    <tr>
-                        <th colspan="8">{% trans "No sleep entries found." %}</th>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        {% if sleep.duration %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "Duration" %}</div>
+                                <div class="babyb-meta-value">{{ sleep.duration|duration_string }}</div>
+                            </div>
+                        {% endif %}
+                        <div class="babyb-meta-block">
+                            <div class="babyb-meta-label">{% trans "Nap" %}</div>
+                            <div class="babyb-meta-value">{{ sleep.nap|bool_icon }}</div>
+                        </div>
+                        {% if sleep.tags.all %}
+                            <div class="babyb-meta-block">
+                                <div class="babyb-meta-label">{% trans "Tags" %}</div>
+                                <div class="babyb-meta-chips">{% include "core/render_tag_list.html" with tags=sleep.tags.all %}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% include 'core/_activity_card_note.html' with note=sleep.notes %}
+                </article>
+            {% endwith %}
+        {% empty %}
+            <div class="babyb-activity-empty">{% trans "No sleep entries found." %}</div>
+        {% endfor %}
     </div>
     {% include 'babybuddy/paginator.html' %}
 {% endblock %}
