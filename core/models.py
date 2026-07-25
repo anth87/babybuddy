@@ -2,6 +2,7 @@
 import datetime
 import re
 
+from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -272,6 +273,14 @@ class DiaperChange(models.Model):
     )
     amount = models.FloatField(blank=True, null=True, verbose_name=_("Amount"))
     notes = models.TextField(blank=True, null=True, verbose_name=_("Notes"))
+    logged_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="logged_diaper_changes",
+        verbose_name=_("Logged by"),
+    )
     tags = TaggableManager(blank=True, through=Tagged)
 
     objects = models.Manager()
@@ -343,6 +352,14 @@ class Feeding(models.Model):
     )
     amount = models.FloatField(blank=True, null=True, verbose_name=_("Amount"))
     notes = models.TextField(blank=True, null=True, verbose_name=_("Notes"))
+    logged_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="logged_feedings",
+        verbose_name=_("Logged by"),
+    )
     tags = TaggableManager(blank=True, through=Tagged)
 
     settings = FeedingSettings()

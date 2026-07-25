@@ -149,6 +149,8 @@ class ChildSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class DiaperChangeSerializer(CoreModelSerializer, TaggableSerializer):
+    logged_by = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = models.DiaperChange
         fields = (
@@ -160,11 +162,14 @@ class DiaperChangeSerializer(CoreModelSerializer, TaggableSerializer):
             "color",
             "amount",
             "notes",
+            "logged_by",
             "tags",
         )
 
 
 class FeedingSerializer(CoreModelWithDurationSerializer, TaggableSerializer):
+    logged_by = serializers.StringRelatedField(read_only=True)
+
     class Meta(CoreModelWithDurationSerializer.Meta):
         model = models.Feeding
         fields = (
@@ -178,6 +183,7 @@ class FeedingSerializer(CoreModelWithDurationSerializer, TaggableSerializer):
             "method",
             "amount",
             "notes",
+            "logged_by",
             "tags",
         )
 

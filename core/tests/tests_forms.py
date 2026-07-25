@@ -248,6 +248,8 @@ class DiaperChangeFormsTestCase(FormsTestCaseBase):
         page = self.c.post("/changes/add/", params, follow=True)
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "Diaper Change entry for {} added".format(str(child)))
+        self.assertEqual(models.DiaperChange.objects.latest("id").logged_by, self.user)
+        self.assertContains(page, "Logged by {}".format(self.user.username))
 
     def test_edit(self):
         params = {
@@ -299,6 +301,8 @@ class FeedingFormsTestCase(FormsTestCaseBase):
         page = self.c.post("/feedings/add/", params, follow=True)
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "Feeding entry for {} added".format(str(self.child)))
+        self.assertEqual(models.Feeding.objects.latest("id").logged_by, self.user)
+        self.assertContains(page, "Logged by {}".format(self.user.username))
 
     def test_edit(self):
         end = timezone.localtime()

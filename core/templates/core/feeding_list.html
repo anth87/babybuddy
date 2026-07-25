@@ -27,7 +27,7 @@
                     {% feeding_time_diff_base prev_feeding as feeding_diff_base %}
                 {% endif %}
                 <article class="babyb-activity-card">
-                    {% include 'core/_activity_card_head.html' with icon='icon-feeding' tile='babyb-activity-icon--violet' time=feeding.start|datetime_short unique_child=unique_child child=feeding.child has_prev=prev_feeding prev_dt=feeding_diff_base current_dt=feeding.start obj=feeding can_edit=perms.core.change_feeding edit_url_name='core:feeding-update' can_delete=perms.core.delete_feeding delete_url_name='core:feeding-delete' %}
+                    {% include 'core/_activity_card_head.html' with icon='icon-feeding' tile='babyb-activity-icon--violet' time=feeding.start|datetime_short unique_child=unique_child child=feeding.child has_prev=prev_feeding prev_dt=feeding_diff_base current_dt=feeding.start logged_by=feeding.logged_by obj=feeding can_edit=perms.core.change_feeding edit_url_name='core:feeding-update' can_delete=perms.core.delete_feeding delete_url_name='core:feeding-delete' %}
                     <div class="babyb-activity-meta">
                         <div class="babyb-meta-block">
                             <div class="babyb-meta-label">{% trans "Method" %}</div>

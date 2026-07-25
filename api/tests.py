@@ -246,6 +246,7 @@ class DiaperChangeAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
                 "color": "",
                 "amount": 2.25,
                 "notes": "stinky",
+                "logged_by": None,
                 "tags": [],
             },
         )
@@ -268,6 +269,8 @@ class DiaperChangeAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
         self.assertEqual(obj.color, data["color"])
         self.assertEqual(obj.amount, data["amount"])
         self.assertEqual(obj.notes, data["notes"])
+        self.assertEqual(obj.logged_by.username, "admin")
+        self.assertEqual(response.data["logged_by"], "admin")
 
     def test_post_null_time(self):
         data = {
@@ -324,6 +327,7 @@ class FeedingAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
                 "method": "bottle",
                 "amount": 2.5,
                 "notes": "forgot vitamins :(",
+                "logged_by": None,
                 "tags": [],
             },
         )
@@ -355,6 +359,8 @@ class FeedingAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
         obj = models.Feeding.objects.get(pk=response.data["id"])
         self.assertEqual(obj.type, data["type"])
         self.assertEqual(obj.notes, data["notes"])
+        self.assertEqual(obj.logged_by.username, "admin")
+        self.assertEqual(response.data["logged_by"], "admin")
 
     def test_patch(self):
         endpoint = "{}{}/".format(self.endpoint, 3)

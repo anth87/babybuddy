@@ -12,6 +12,7 @@
       has_prev       truthy previous object; enables the "Previous · X ago" text
       prev_dt        previous datetime used for the relative comparison
       current_dt     this record's datetime
+            logged_by      optional user who created the activity
       obj            the record (used to build edit/delete URLs)
       can_edit / edit_url_name       show edit button and its URL name
       can_delete / delete_url_name   show delete button and its URL name
@@ -20,7 +21,7 @@
     <span class="babyb-activity-icon {{ tile }}" aria-hidden="true"><i class="{{ icon }}"></i></span>
     <div class="babyb-activity-headmain">
         <div class="babyb-activity-time">{{ time }}</div>
-        {% if child and not unique_child or has_prev %}
+        {% if child and not unique_child or has_prev or logged_by %}
             <div class="babyb-activity-sub">
                 {% if child and not unique_child %}
                     <a href="{% url 'core:child' child.slug %}">{{ child }}</a>
@@ -29,6 +30,12 @@
                     {% if child and not unique_child %}<span class="babyb-dot-sep">&middot;</span>{% endif %}
                     {% blocktrans trimmed with time_ago=prev_dt|timesince:current_dt %}
                         Previous · {{ time_ago }} ago
+                    {% endblocktrans %}
+                {% endif %}
+                {% if logged_by %}
+                    {% if child and not unique_child or has_prev %}<span class="babyb-dot-sep">&middot;</span>{% endif %}
+                    {% blocktrans trimmed with user=logged_by %}
+                        Logged by {{ user }}
                     {% endblocktrans %}
                 {% endif %}
             </div>

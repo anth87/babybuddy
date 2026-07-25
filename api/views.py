@@ -52,6 +52,9 @@ class DiaperChangeViewSet(viewsets.ModelViewSet):
     ordering_fields = ("amount", "time")
     ordering = "-time"
 
+    def perform_create(self, serializer):
+        serializer.save(logged_by=self.request.user)
+
 
 class FeedingViewSet(viewsets.ModelViewSet):
     queryset = models.Feeding.objects.all()
@@ -59,6 +62,9 @@ class FeedingViewSet(viewsets.ModelViewSet):
     filterset_class = filters.FeedingFilter
     ordering_fields = ("amount", "duration", "end", "start")
     ordering = "-end"
+
+    def perform_create(self, serializer):
+        serializer.save(logged_by=self.request.user)
 
 
 class HeadCircumferenceViewSet(viewsets.ModelViewSet):

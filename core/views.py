@@ -29,6 +29,11 @@ def _prepare_timeline_context_data(context, date, child=None):
 
 
 class CoreAddView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    def form_valid(self, form):
+        if "logged_by" in {field.name for field in self.model._meta.fields}:
+            form.instance.logged_by = self.request.user
+        return super(CoreAddView, self).form_valid(form)
+
     def get_success_message(self, cleaned_data):
         cleaned_data["model"] = self.model._meta.verbose_name.title()
         if "child" in cleaned_data:
