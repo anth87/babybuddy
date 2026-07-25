@@ -8,6 +8,7 @@ from babybuddy.models import Settings
 from core import models
 from dashboard.templatetags import cards
 
+from datetime import timedelta
 from unittest import mock
 
 
@@ -164,17 +165,63 @@ class TemplateTagsTestCase(TestCase):
         self.assertFalse(data["empty"])
         self.assertFalse(data["hide_empty"])
 
-        # most recent day
-        self.assertEqual(data["feedings"][0]["total"], 2.5)
-        self.assertEqual(data["feedings"][0]["count"], 3)
+        # Seven days, oldest first, ending on the requested day.
+        self.assertEqual(len(data["days"]), 7)
+        self.assertEqual(data["days"][0]["date"], self.date.date() - timedelta(days=6))
+        self.assertEqual(data["days"][-1]["date"], self.date.date())
 
-        # yesterday
-        self.assertEqual(data["feedings"][1]["total"], 0.25)
-        self.assertEqual(data["feedings"][1]["count"], 1)
+        # Today (2017-11-18).
+        self.assertEqual(data["today"], data["days"][-1])
+        self.assertEqual(data["today"]["total"], 2.5)
+        self.assertEqual(data["today"]["count"], 3)
+        self.assertTrue(data["today"]["today"])
 
-        # last day
-        self.assertEqual(data["feedings"][-1]["total"], 20.0)
-        self.assertEqual(data["feedings"][-1]["count"], 2)
+        # Yesterday (2017-11-17).
+        self.assertEqual(data["days"][-2]["total"], 0.25)
+        self.assertEqual(data["days"][-2]["count"], 1)
+        self.assertFalse(data["days"][-2]["today"])
+
+        # A day with no feedings still gets a column.
+        self.assertEqual(data["days"][0]["total"], 0)
+        self.assertEqual(data["days"][0]["count"], 0)
+
+    def test_card_feeding_recent_bar_heights(self):
+        data = cards.card_feeding_recent(self.context, self.child, self.date)
+
+        # Bars are a percentage of the tallest day in the window (2.5).
+        self.assertEqual(data["days"][-1]["percent"], 100)
+        self.assertEqual(data["days"][-2]["percent"], 10)
+        self.assertEqual(data["days"][0]["percent"], 0)
+
+    def test_card_feeding_recent_average_excludes_today(self):
+        data = cards.card_feeding_recent(self.context, self.child, self.date)
+
+        # Only 2017-11-17 has feedings among the six completed days, and
+        # today's much larger total is left out entirely.
+        self.assertEqual(data["average"], round(0.25 / 6))
+        self.assertEqual(data["average_percent"], 0)
+
+    def test_card_feeding_recent_no_amounts_recorded(self):
+        child = models.Child.objects.create(
+            first_name="No", last_name="Amounts", birth_date=timezone.localdate()
+        )
+        models.Feeding.objects.create(
+            child=child,
+            start=timezone.localtime() - timezone.timedelta(minutes=30),
+            end=timezone.localtime(),
+            type="formula",
+            method="bottle",
+        )
+
+        data = cards.card_feeding_recent(self.context, child)
+
+        # Nothing to scale against, so no bar has any height, but the feeding
+        # is still counted.
+        self.assertFalse(data["empty"])
+        self.assertEqual(data["today"]["count"], 1)
+        self.assertEqual(data["today"]["total"], 0)
+        self.assertEqual(data["today"]["percent"], 0)
+        self.assertEqual(data["average"], 0)
 
     def test_card_feeding_last(self):
         data = cards.card_feeding_last(self.context, self.child)
@@ -238,12 +285,61 @@ class TemplateTagsTestCase(TestCase):
         )
 
     def test_card_pumping_last(self):
+        pumping = models.Pumping.objects.create(
+            child=self.child,
+            start=timezone.localtime() - timezone.timedelta(minutes=15),
+            end=timezone.localtime(),
+            amount=30.0,
+        )
+
         data = cards.card_pumping_last(self.context, self.child)
         self.assertEqual(data["type"], "pumping")
         self.assertFalse(data["empty"])
-        self.assertFalse(data["hide_empty"])
         self.assertIsInstance(data["pumping"], models.Pumping)
-        self.assertEqual(data["pumping"], models.Pumping.objects.first())
+        self.assertEqual(data["pumping"], pumping)
+
+    def test_card_pumping_last_hidden_when_older_than_a_week(self):
+        stale = timezone.localtime() - timezone.timedelta(days=7, hours=1)
+        models.Pumping.objects.create(
+            child=self.child,
+            start=stale,
+            end=stale + timezone.timedelta(minutes=15),
+            amount=30.0,
+        )
+
+        data = cards.card_pumping_last(self.context, self.child)
+        self.assertIsNone(data["pumping"])
+        self.assertTrue(data["empty"])
+        # The card is dropped whatever the user's "hide empty" preference is.
+        self.assertTrue(data["hide_empty"])
+
+    def test_card_pumping_last_shown_just_inside_a_week(self):
+        recent = timezone.localtime() - timezone.timedelta(days=6, hours=23)
+        pumping = models.Pumping.objects.create(
+            child=self.child,
+            start=recent,
+            end=recent + timezone.timedelta(minutes=15),
+            amount=30.0,
+        )
+
+        data = cards.card_pumping_last(self.context, self.child)
+        self.assertEqual(data["pumping"], pumping)
+        self.assertFalse(data["empty"])
+
+    def test_card_pumping_last_amount_has_one_decimal_place(self):
+        pumping = models.Pumping.objects.create(
+            child=self.child,
+            start=timezone.localtime() - timezone.timedelta(minutes=15),
+            end=timezone.localtime(),
+            amount=30.0,
+        )
+
+        card = render_to_string(
+            "cards/pumping_last.html",
+            {"pumping": pumping, "empty": False, "hide_empty": True},
+        )
+
+        self.assertIn("30.0 mL", card)
 
     def test_card_pumping_recent(self):
         data = cards.card_pumping_recent(self.context, self.child, self.date)

@@ -17,6 +17,9 @@
 {% endblock %}
 {% block content %}
     {% if pumping %}
-        {% trans "Amount" %}: {{ pumping.amount }}
+        {% trans "Amount" %}:
+        {% blocktrans trimmed with amount=pumping.amount|floatformat:"1" %}
+            {{ amount }} mL
+        {% endblocktrans %}
     {% endif %}
 {% endblock %}

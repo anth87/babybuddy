@@ -181,6 +181,204 @@
     }
 }
 
+// Recent Feedings: today's figures on the left, a seven-day bar chart on the
+// right. Hovering, tapping or focusing a bar points the readout at that day.
+.feeding-recent {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    .fr-readout {
+        flex: 0 0 auto;
+        min-width: 88px;
+    }
+
+    .fr-total {
+        font-family: $headings-font-family;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .fr-count {
+        margin-top: 4px;
+        font-size: 13px;
+        color: $graphite;
+    }
+
+    .fr-when {
+        font-size: 13px;
+        color: $slate;
+
+        // Marks a readout that is showing some day other than today.
+        &.is-selected {
+            font-weight: 600;
+            color: $voltage-violet;
+        }
+    }
+
+    .fr-chart {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    // Counts, bars and day letters are three aligned rows of the same seven
+    // columns, so a count label can never collide with a bar or the average
+    // line.
+    .fr-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 5px;
+    }
+
+    .fr-cell {
+        display: flex;
+        flex: 1 1 0;
+        justify-content: center;
+        min-width: 0;
+    }
+
+    .fr-bars {
+        position: relative;
+        height: 52px;
+
+        // Bars are sized as a percentage of the plot area, which needs the
+        // cells to fill it.
+        .fr-cell {
+            height: 100%;
+        }
+    }
+
+    .fr-avg {
+        position: absolute;
+        right: 0;
+        left: 0;
+        border-top: 1px dashed rgba($voltage-violet, 0.6);
+        pointer-events: none;
+    }
+
+    .fr-n {
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: $slate;
+        font-variant-numeric: tabular-nums;
+        transition: color 120ms ease;
+    }
+
+    .fr-days {
+        margin-top: 5px;
+    }
+
+    .fr-day {
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.2;
+        color: $slate;
+        transition: color 120ms ease;
+
+        // Today keeps a marker under its letter so the current column stays
+        // identifiable while another day is selected.
+        &.is-today {
+            position: relative;
+
+            &::after {
+                position: absolute;
+                bottom: -4px;
+                left: 50%;
+                width: 3px;
+                height: 3px;
+                margin-left: -1.5px;
+                border-radius: 50%;
+                background-color: $mist;
+                content: '';
+            }
+        }
+    }
+
+    .fr-bar {
+        display: block;
+        width: 100%;
+        max-width: 14px;
+        min-height: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, $voltage-violet, $lavender-field);
+        opacity: 0.34;
+        transition: opacity 120ms ease;
+    }
+
+    .fr-hit {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0 2px;
+        border: 0;
+        border-radius: 4px;
+        background: none;
+        cursor: pointer;
+        appearance: none;
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $voltage-violet;
+            outline-offset: 2px;
+        }
+
+        &:hover .fr-bar {
+            opacity: 0.62;
+        }
+    }
+
+    // The selected day, whether pinned by a click or previewed by a hover.
+    .fr-cell.is-active {
+        .fr-bar,
+        .fr-hit:hover .fr-bar {
+            opacity: 1;
+        }
+
+        .fr-n,
+        .fr-day {
+            color: $voltage-violet;
+        }
+
+        .fr-day.is-today::after {
+            background-color: $voltage-violet;
+        }
+    }
+
+    .fr-avg-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 9px;
+        font-size: 12px;
+        color: $slate;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .fr-avg-swatch {
+        flex: 0 0 auto;
+        width: 14px;
+        border-top: 1px dashed rgba($voltage-violet, 0.6);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .fr-bar,
+        .fr-n,
+        .fr-day {
+            transition: none;
+        }
+    }
+}
+
 // Progress bars inside cards (diaper change types, breastfeeding, naps).
 // Some segments carry text labels, so they need a real height and a readable
 // font size (the markup's .lead class would otherwise blow the text up).
