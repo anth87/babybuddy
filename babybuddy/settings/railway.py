@@ -26,3 +26,9 @@ os.makedirs(MEDIA_ROOT, exist_ok=True)  # noqa: F405
 # when configured via AWS_STORAGE_BUCKET_NAME, takes precedence naturally
 # because uploads then bypass MEDIA_ROOT.
 SERVE_MEDIA_FROM_APP = not AWS_STORAGE_BUCKET_NAME  # noqa: F405
+
+# Provide DRF's interactive API UI for authenticated Railway users.
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (  # noqa: F405
+    "rest_framework.renderers.JSONRenderer",
+    "rest_framework.renderers.BrowsableAPIRenderer",
+)
