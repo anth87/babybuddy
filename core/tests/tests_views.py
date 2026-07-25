@@ -221,6 +221,29 @@ class ViewsTestCase(TestCase):
         response = self.c.get("/timeline/")
         self.assertEqual(response.status_code, 200)
 
+    def test_child_timeline_displays_activity_logger(self):
+        child = models.Child.objects.first()
+        models.DiaperChange.objects.create(
+            child=child,
+            time=timezone.localtime(),
+            wet=True,
+            solid=False,
+            logged_by=self.user,
+        )
+        models.Feeding.objects.create(
+            child=child,
+            start=timezone.localtime() - timezone.timedelta(minutes=30),
+            end=timezone.localtime(),
+            type="formula",
+            method="bottle",
+            logged_by=self.user,
+        )
+
+        response = self.c.get("/children/{}/".format(child.slug))
+        self.assertContains(
+            response, "Logged by {}".format(self.user.username), count=3
+        )
+
     def test_tummytime_views(self):
         page = self.c.get("/tummy-time/")
         self.assertEqual(page.status_code, 200)

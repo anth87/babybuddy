@@ -154,6 +154,7 @@ def _add_feedings(min_date, max_date, events, child=None):
             "time": timezone.localtime(instance.start),
             "details": details,
             "edit_link": edit_link,
+            "logged_by": instance.logged_by,
             "model_name": instance.model_name,
             "tags": instance.tags.all(),
         }
@@ -208,6 +209,7 @@ def _add_diaper_changes(min_date, max_date, events, child):
                     "type": "".join(contents),
                 },
                 "edit_link": reverse("core:diaperchange-update", args=[instance.id]),
+                "logged_by": instance.logged_by,
                 "model_name": instance.model_name,
                 "tags": instance.tags.all(),
             }

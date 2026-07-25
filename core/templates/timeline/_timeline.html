@@ -62,6 +62,14 @@
                                     {% endblocktrans %}
                                 </span>
                             {% endif %}
+                            {% if object.logged_by %}
+                                <span class="babyb-tl-sep" aria-hidden="true">•</span>
+                                <span>
+                                    {% blocktrans trimmed with user=object.logged_by %}
+                                        Logged by {{ user }}
+                                    {% endblocktrans %}
+                                </span>
+                            {% endif %}
                             {% if object.edit_link %}
                                 <a class="babyb-tl-edit" href="{{ object.edit_link }}">{% trans "Edit" %}</a>
                             {% endif %}
