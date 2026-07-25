@@ -2,7 +2,7 @@
 from datetime import timedelta
 
 from django.urls import reverse
-from django.utils import timezone, timesince
+from django.utils import formats, timezone, timesince
 from django.utils.translation import gettext as _
 
 from core.models import (
@@ -148,7 +148,10 @@ def _add_feedings(min_date, max_date, events, child=None):
             continue
         edit_link = reverse("core:feeding-update", args=[instance.id])
         if instance.amount:
-            details.append(_("Amount: %(amount)s mL") % {"amount": instance.amount})
+            details.append(
+                _("Amount: %(amount)s mL")
+                % {"amount": formats.number_format(instance.amount, decimal_pos=0)}
+            )
 
         base_object = {
             "time": timezone.localtime(instance.start),
@@ -228,7 +231,7 @@ def _add_medication(min_date, max_date, events, child):
             details.append(
                 _("Dosage")
                 + ": "
-                + str(instance.dosage)
+                + formats.number_format(instance.dosage, decimal_pos=0)
                 + " "
                 + instance.get_dosage_unit_display()
             )

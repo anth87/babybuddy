@@ -421,6 +421,7 @@ class MedicationTestCase(TestCase):
         self.assertEqual(self.medication.name, "Tylenol")
         self.assertEqual(self.medication.dosage, 5.0)
         self.assertEqual(self.medication.dosage_unit, "ml")
+        self.assertEqual(self.medication.get_dosage_unit_display(), "mL")
 
     def test_medication_with_interval(self):
         self.assertEqual(

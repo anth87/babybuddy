@@ -29,7 +29,7 @@
                     </div>
                     <div class="babyb-meta-block">
                         <div class="babyb-meta-label">{% trans "Dosage" %}</div>
-                        <div class="babyb-meta-value">{{ medication.dosage }} {{ medication.get_dosage_unit_display }}</div>
+                        <div class="babyb-meta-value">{{ medication.dosage|floatformat:"0g" }} {{ medication.get_dosage_unit_display }}</div>
                     </div>
                     <div class="babyb-meta-block">
                         <div class="babyb-meta-label">{% trans "Next Dose Interval" %}</div>

@@ -20,7 +20,7 @@
         <div>
             <strong>{{ medication.name }}</strong>
         </div>
-        <div>{{ medication.dosage }} {{ medication.get_dosage_unit_display }}</div>
+        <div>{{ medication.dosage|floatformat:"0g" }} {{ medication.get_dosage_unit_display }}</div>
         {% if medication.next_dose_time %}
             <div class="mt-1">
                 {% if medication.next_dose_ready %}

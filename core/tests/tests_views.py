@@ -244,6 +244,28 @@ class ViewsTestCase(TestCase):
             response, "Logged by {}".format(self.user.username), count=3
         )
 
+    def test_child_timeline_displays_whole_number_ml_amounts(self):
+        child = models.Child.objects.first()
+        models.Feeding.objects.create(
+            child=child,
+            start=timezone.localtime() - timezone.timedelta(minutes=30),
+            end=timezone.localtime(),
+            type="formula",
+            method="bottle",
+            amount=100.0,
+        )
+        models.Medication.objects.create(
+            child=child,
+            name="Panadol",
+            dosage=1.0,
+            dosage_unit="ml",
+            time=timezone.localtime(),
+        )
+
+        response = self.c.get("/children/{}/".format(child.slug))
+        self.assertContains(response, "Amount: 100 mL")
+        self.assertContains(response, "Dosage: 1 mL")
+
     def test_tummytime_views(self):
         page = self.c.get("/tummy-time/")
         self.assertEqual(page.status_code, 200)

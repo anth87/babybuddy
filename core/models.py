@@ -811,7 +811,7 @@ class Medication(models.Model):
         max_length=20,
         choices=[
             ("mg", _("MG")),
-            ("ml", _("ML")),
+            ("ml", _("mL")),
             ("tablets", _("Tablets")),
             ("drops", _("Drops")),
         ],

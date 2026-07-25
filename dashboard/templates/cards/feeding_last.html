@@ -21,7 +21,7 @@
     {% if feeding %}
         {{ feeding.get_type_display }}, {{ feeding.get_method_display }}
         {% if feeding.amount %}
-            {% blocktrans trimmed with amount=feeding.amount %}
+            {% blocktrans trimmed with amount=feeding.amount|floatformat:"0g" %}
                 ({{ amount }} mL)
             {% endblocktrans %}
         {% endif %}

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils import timezone
 
@@ -185,6 +186,44 @@ class TemplateTagsTestCase(TestCase):
         self.assertEqual(
             data["feeding_diff_base"], models.Feeding.objects.first().start
         )
+
+    def test_dashboard_cards_display_whole_number_ml_amounts(self):
+        feeding = models.Feeding.objects.create(
+            child=self.child,
+            start=timezone.localtime() - timezone.timedelta(minutes=30),
+            end=timezone.localtime(),
+            type="formula",
+            method="bottle",
+            amount=100.0,
+        )
+        medication = models.Medication.objects.create(
+            child=self.child,
+            name="Panadol",
+            dosage=1.0,
+            dosage_unit="ml",
+            time=timezone.localtime(),
+        )
+
+        feeding_card = render_to_string(
+            "cards/feeding_last.html",
+            {
+                "feeding": feeding,
+                "feeding_diff_base": feeding.start,
+                "empty": False,
+                "hide_empty": False,
+            },
+        )
+        medication_card = render_to_string(
+            "cards/medication_last.html",
+            {
+                "medication": medication,
+                "empty": False,
+                "hide_empty": False,
+            },
+        )
+
+        self.assertIn("(100 mL)", feeding_card)
+        self.assertIn("1 mL", medication_card)
 
     def test_card_feeding_last_method(self):
         data = cards.card_feeding_last_method(self.context, self.child)
