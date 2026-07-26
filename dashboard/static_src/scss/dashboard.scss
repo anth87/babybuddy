@@ -436,15 +436,19 @@
 // ---------------------------------------------------------------------------
 .babyb-status-strip {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(216px, 1fr));
+    // min() keeps the 216px track floor from outgrowing a container narrower
+    // than that, which is what pushed tiles past the panel edge on phones.
+    grid-template-columns: repeat(auto-fit, minmax(min(216px, 100%), 1fr));
     gap: 12px;
     padding: 16px;
     background-color: $white;
     border: 1px solid #edf0f5;
     border-radius: 22px;
 
-    @media (max-width: 575.98px) {
-        grid-template-columns: 1fr 1fr;
+    // Below 500px a tile cannot hold its label, note and value side by side
+    // without overflowing, so it gets the full width to itself.
+    @media (max-width: 499.98px) {
+        grid-template-columns: 1fr;
         gap: 10px;
         padding: 12px;
     }
@@ -453,6 +457,9 @@
 .babyb-status {
     display: flex;
     flex-direction: column;
+    // Grid items default to min-content, which a long "usually every…" line
+    // would push wider than its track.
+    min-width: 0;
     gap: 10px;
     padding: 14px 16px;
     background-color: #f8f9fc;
@@ -468,6 +475,9 @@
         display: flex;
         align-items: center;
         gap: 9px;
+        // "Due in ~1h 37m" and "Next dose ready" hold their own line rather
+        // than forcing the tile wider than the column.
+        flex-wrap: wrap;
     }
 
     // No leading dot: it would indent the label out of line with the value,
