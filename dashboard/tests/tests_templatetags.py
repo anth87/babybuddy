@@ -201,6 +201,16 @@ class TemplateTagsTestCase(TestCase):
         self.assertEqual(data["average"], round(0.25 / 6))
         self.assertEqual(data["average_percent"], 0)
 
+    def test_trend_daily_average_excludes_today(self):
+        values = [1, 2, 3, 4, 5, 6, 100]
+        labels = [""] * 7
+
+        days, average_percent = cards._trend_days(values, labels, labels, labels)
+
+        self.assertEqual(cards._trend_daily_average(values), 3.5)
+        self.assertEqual(average_percent, 3.5)
+        self.assertTrue(days[-1]["today"])
+
     def test_card_feeding_recent_no_amounts_recorded(self):
         child = models.Child.objects.create(
             first_name="No", last_name="Amounts", birth_date=timezone.localdate()

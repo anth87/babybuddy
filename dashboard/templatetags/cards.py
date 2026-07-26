@@ -1078,6 +1078,11 @@ def card_tummytime_day(context, child, date=None):
 MIN_BAR_PCT = 6
 
 
+def _trend_daily_average(values):
+    """Return the mean of the six completed days preceding today's bucket."""
+    return sum(values[:-1]) / 6
+
+
 def _trend_days(values, displays, headlines, sublines, lower=None):
     """
     Turn a seven-day series into bar geometry for the trends chart.
@@ -1105,7 +1110,10 @@ def _trend_days(values, displays, headlines, sublines, lower=None):
                 "lower": round(lower[index] / value * 100, 2) if lower and value else 0,
             }
         )
-    average_pct = round(min(100, (sum(values) / 7) / peak * 100), 2)
+    # The last bucket is today and is usually still in progress.  Use the six
+    # completed days for the reference line so today's partial total cannot
+    # pull the daily average down.
+    average_pct = round(min(100, _trend_daily_average(values) / peak * 100), 2)
     return days, average_pct
 
 
@@ -1150,6 +1158,7 @@ def card_trends(context, child):
             for day in recent
         ]
         days, average_pct = _trend_days(values, displays, headlines, sublines)
+        daily_average = _trend_daily_average(values)
         statistics = _feeding_statistics(child)
         metrics.append(
             {
@@ -1159,10 +1168,10 @@ def card_trends(context, child):
                 "average_pct": average_pct,
                 "average_label": (
                     _("Daily average: %(amount)s mL")
-                    % {"amount": _amount(sum(values) / 7)}
+                    % {"amount": _amount(daily_average)}
                     if by_amount
                     else _("Daily average: %(count)s feedings")
-                    % {"count": formats.number_format(sum(values) / 7, decimal_pos=1)}
+                    % {"count": formats.number_format(daily_average, decimal_pos=1)}
                 ),
                 "interval": (
                     _elapsed(statistics[0]["btwn_average"]) if statistics else ""
@@ -1194,6 +1203,7 @@ def card_trends(context, child):
             for day in recent
         ]
         days, average_pct = _trend_days(values, displays, headlines, sublines, solids)
+        daily_average = _trend_daily_average(values)
         statistics = _diaperchange_statistics(child)
         metrics.append(
             {
@@ -1202,7 +1212,7 @@ def card_trends(context, child):
                 "days": days,
                 "average_pct": average_pct,
                 "average_label": _("Daily average: %(count)s changes")
-                % {"count": formats.number_format(sum(values) / 7, decimal_pos=1)},
+                % {"count": formats.number_format(daily_average, decimal_pos=1)},
                 "interval": (
                     _elapsed(statistics[0]["btwn_average"]) if statistics else ""
                 ),
@@ -1227,6 +1237,7 @@ def card_trends(context, child):
             for day in recent
         ]
         days, average_pct = _trend_days(values, displays, headlines, sublines)
+        daily_average = _trend_daily_average(values)
         statistics = _sleep_statistics(child)
         metrics.append(
             {
@@ -1235,7 +1246,7 @@ def card_trends(context, child):
                 "days": days,
                 "average_pct": average_pct,
                 "average_label": _("Daily average: %(total)s")
-                % {"total": _elapsed(timezone.timedelta(hours=sum(values) / 7))},
+                % {"total": _elapsed(timezone.timedelta(hours=daily_average))},
                 "interval": (
                     _elapsed(statistics["btwn_average"]) + " " + _("awake")
                     if statistics
@@ -1261,6 +1272,7 @@ def card_trends(context, child):
             for day in recent
         ]
         days, average_pct = _trend_days(values, displays, headlines, sublines)
+        daily_average = _trend_daily_average(values)
         metrics.append(
             {
                 "key": "pumping",
@@ -1268,7 +1280,7 @@ def card_trends(context, child):
                 "days": days,
                 "average_pct": average_pct,
                 "average_label": _("Daily average: %(amount)s mL")
-                % {"amount": _amount(sum(values) / 7)},
+                % {"amount": _amount(daily_average)},
                 "interval": "",
                 "total": _("%(amount)s mL") % {"amount": _amount(sum(values))},
                 "split": False,

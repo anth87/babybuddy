@@ -702,6 +702,9 @@
 }
 
 .babyb-chart {
+    --chart-value-height: 17px;
+    --chart-value-gap: 6px;
+
     position: relative;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -710,18 +713,26 @@
     border-bottom: 1px solid #eef1f6;
 }
 
+.babyb-chart-average-zone {
+    position: absolute;
+    top: calc(var(--chart-value-height) + var(--chart-value-gap));
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+}
+
 .babyb-chart-average {
     position: absolute;
-    left: 0;
     right: 0;
+    left: 0;
     border-top: 1px dashed #c9a2f6;
-    pointer-events: none;
 }
 
 .babyb-bar {
     display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 6px;
+    grid-template-rows: var(--chart-value-height) 1fr;
+    gap: var(--chart-value-gap);
     height: 100%;
     padding: 0;
     border: none;
@@ -731,6 +742,7 @@
     .babyb-bar-value {
         font-size: 11.5px;
         font-weight: 600;
+        line-height: var(--chart-value-height);
         color: #8b93a5;
         font-variant-numeric: tabular-nums;
     }

@@ -25,7 +25,9 @@
         </div>
         <div class="babyb-trend-sub" data-babyb-subline>{{ default.days.6.subline }}</div>
         <div class="babyb-chart" data-babyb-chart>{# djlint:off #}
-            <span class="babyb-chart-average" data-babyb-average style="bottom:{{ default.average_pct }}%"></span>
+            <span class="babyb-chart-average-zone">
+                <span class="babyb-chart-average" data-babyb-average style="bottom:{{ default.average_pct }}%"></span>
+            </span>
             {% for day in default.days %}
                 <button class="babyb-bar{% if day.today %} is-today is-active{% endif %}" type="button" data-babyb-bar="{{ day.index }}" aria-label="{{ day.name }}">
                     <span class="babyb-bar-value">{{ day.display }}</span>
