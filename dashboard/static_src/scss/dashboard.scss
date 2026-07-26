@@ -713,20 +713,12 @@
     border-bottom: 1px solid #eef1f6;
 }
 
-.babyb-chart-average-zone {
-    position: absolute;
-    top: calc(var(--chart-value-height) + var(--chart-value-gap));
-    right: 0;
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-}
-
 .babyb-chart-average {
     position: absolute;
-    right: 0;
     left: 0;
+    right: 0;
     border-top: 1px dashed #c9a2f6;
+    pointer-events: none;
 }
 
 .babyb-bar {

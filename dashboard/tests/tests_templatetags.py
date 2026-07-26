@@ -208,7 +208,7 @@ class TemplateTagsTestCase(TestCase):
         days, average_percent = cards._trend_days(values, labels, labels, labels)
 
         self.assertEqual(cards._trend_daily_average(values), 3.5)
-        self.assertEqual(average_percent, 3.5)
+        self.assertEqual(average_percent, 2.96)
         self.assertTrue(days[-1]["today"])
 
     def test_card_feeding_recent_no_amounts_recorded(self):

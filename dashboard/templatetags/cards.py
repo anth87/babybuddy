@@ -1076,6 +1076,9 @@ def card_tummytime_day(context, child, date=None):
 # Minimum bar height, as a percentage of the chart, so a low-but-nonzero day
 # stays visible next to a tall one.
 MIN_BAR_PCT = 6
+# Keep these in sync with .babyb-chart and its value row in dashboard.scss.
+TREND_CHART_HEIGHT = 150
+TREND_CHART_PLOT_HEIGHT = 127
 
 
 def _trend_daily_average(values):
@@ -1113,7 +1116,12 @@ def _trend_days(values, displays, headlines, sublines, lower=None):
     # The last bucket is today and is usually still in progress.  Use the six
     # completed days for the reference line so today's partial total cannot
     # pull the daily average down.
-    average_pct = round(min(100, _trend_daily_average(values) / peak * 100), 2)
+    average_pct = round(
+        min(100, _trend_daily_average(values) / peak * 100)
+        * TREND_CHART_PLOT_HEIGHT
+        / TREND_CHART_HEIGHT,
+        2,
+    )
     return days, average_pct
 
 
