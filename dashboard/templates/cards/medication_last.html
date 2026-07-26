@@ -1,43 +1,49 @@
-{% extends 'cards/base.html' %}
+{% extends 'cards/status_base.html' %}
 {% load duration i18n %}
-{% block header %}
-    <a href="{% url "core:medication-list" %}">{% trans "Last Medication" %}</a>
+{% block link %}
+    {% url "core:medication-list" %}
 {% endblock %}
-{% block title %}
-    {% if medication %}
-        <div>
-            {% blocktrans trimmed with time_ago=medication.time|deltasince|duration_string:'m' %}
-                {{ time_ago }} ago
+{% block label %}
+    {% trans "Medicine" %}
+{% endblock %}
+{% block note_tone %}
+    {% if medication.next_dose_ready %}babyb-tone--warn{% else %}babyb-tone--muted{% endif %}
+{% endblock %}
+{% block note %}
+    {% if medication.next_dose_time %}
+        {% if medication.next_dose_ready %}
+            {% trans "Next dose ready" %}
+        {% else %}
+            {% blocktrans trimmed with next_time=medication.next_dose_time|time %}
+                Next {{ next_time }}
             {% endblocktrans %}
-        </div>
-        <small>{{ medication.time|time }}</small>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block value %}
+    {% if medication %}
+        {{ status.elapsed }}
     {% else %}
         {% trans "None" %}
     {% endif %}
 {% endblock %}
-{% block content %}
+{% block sub %}
     {% if medication %}
-        <div>
-            <strong>{{ medication.name }}</strong>
-        </div>
-        <div>{{ medication.dosage|floatformat:"0g" }} {{ medication.get_dosage_unit_display }}</div>
-        {% if medication.next_dose_time %}
-            <div class="mt-1">
-                {% if medication.next_dose_ready %}
-                    <span class="badge bg-success">{% trans "Next dose ready" %}</span>
-                {% else %}
-                    <small class="text-muted">
-                        {% blocktrans trimmed with next_time=medication.next_dose_time|time %}
-                            Next dose at {{ next_time }}
-                        {% endblocktrans %}
-                    </small>
-                {% endif %}
-            </div>
+        {% blocktrans trimmed with time=medication.time|time %}
+            ago · {{ time }}
+        {% endblocktrans %}
+    {% endif %}
+{% endblock %}
+{% block meta %}
+    {% if medication %}
+        {{ medication.name }}
+        {% if medication.dosage %}
+            {% blocktrans trimmed with dosage=medication.dosage|floatformat:"0g" unit=medication.get_dosage_unit_display %}
+                ({{ dosage }} {{ unit }})
+            {% endblocktrans %}
         {% endif %}
         {% if medication.notes %}
-            <div class="mt-1">
-                <small class="text-muted">{{ medication.notes|truncatechars:50 }}</small>
-            </div>
+            <span class="babyb-status-meta-line">{{ medication.notes|truncatechars:40 }}</span>
         {% endif %}
     {% endif %}
 {% endblock %}

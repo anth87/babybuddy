@@ -1,0 +1,66 @@
+{% load i18n %}
+{% if not empty %}
+    <section class="babyb-panel babyb-trends babyb-act babyb-act--{{ default.key }}"
+             data-babyb-trends
+             data-metric="{{ default.key }}">
+        <div class="babyb-panel-head">
+            <h2 class="babyb-panel-title">{% trans "Past 7 days" %}</h2>
+            <a class="babyb-panel-link"
+               href="{% url 'reports:report-list' child.slug %}">{% trans "Reports" %}</a>
+        </div>
+        {% if metrics|length > 1 %}
+            <div class="babyb-tabs" role="tablist">
+                {% for metric in metrics %}
+                    <button class="babyb-tab{% if forloop.first %} is-active{% endif %}"
+                            type="button"
+                            role="tab"
+                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                            data-babyb-metric="{{ metric.key }}">{{ metric.label }}</button>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="babyb-trend-headline">
+            <span class="babyb-trend-value" data-babyb-headline>{{ default.days.6.headline }}</span>
+            <span class="babyb-trend-day" data-babyb-day>{% trans "Today" %}</span>
+        </div>
+        <div class="babyb-trend-sub" data-babyb-subline>{{ default.days.6.subline }}</div>
+        <div class="babyb-chart" data-babyb-chart>{# djlint:off #}
+            <span class="babyb-chart-average" data-babyb-average style="bottom:{{ default.average_pct }}%"></span>
+            {% for day in default.days %}
+                <button class="babyb-bar{% if day.today %} is-today is-active{% endif %}" type="button" data-babyb-bar="{{ day.index }}" aria-label="{{ day.name }}">
+                    <span class="babyb-bar-value">{{ day.display }}</span>
+                    <span class="babyb-bar-track" style="height:{{ day.height }}%">
+                        <span class="babyb-bar-lower" style="height:{{ day.lower }}%"></span>
+                    </span>
+                </button>
+            {% endfor %}
+            {# djlint:on #}</div>
+        <div class="babyb-chart-days">
+            {% for day in default.days %}
+                <span class="babyb-chart-day{% if day.today %} is-today is-active{% endif %}"
+                      title="{{ day.name }}"
+                      data-babyb-day-label="{{ day.index }}">{{ day.letter }}</span>
+            {% endfor %}
+        </div>
+        <div class="babyb-legend{% if not default.split %} d-none{% endif %}"
+             data-babyb-legend>
+            <span class="babyb-legend-item babyb-legend-item--upper">{% trans "Wet" %}</span>
+            <span class="babyb-legend-item babyb-legend-item--lower">{% trans "Dirty" %}</span>
+        </div>
+        <div class="babyb-trend-average">
+            <span class="babyb-trend-average-line" aria-hidden="true"></span>
+            <span data-babyb-average-label>{{ default.average_label }}</span>
+        </div>
+        <div class="babyb-trend-stats">
+            <div class="babyb-trend-stat">
+                <div class="babyb-trend-stat-label">{% trans "Avg interval" %}</div>
+                <div class="babyb-trend-stat-value" data-babyb-interval>{% firstof default.interval "—" %}</div>
+            </div>
+            <div class="babyb-trend-stat">
+                <div class="babyb-trend-stat-label">{% trans "7-day total" %}</div>
+                <div class="babyb-trend-stat-value" data-babyb-total>{{ default.total }}</div>
+            </div>
+        </div>
+    </section>
+    {{ metrics|json_script:"babyb-trend-data" }}
+{% endif %}

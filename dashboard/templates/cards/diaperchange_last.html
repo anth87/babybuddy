@@ -1,20 +1,40 @@
-{% extends 'cards/base.html' %}
+{% extends 'cards/status_base.html' %}
 {% load duration i18n %}
-{% block header %}
-    <a href="{% url "core:diaperchange-list" %}">{% trans "Last Diaper Change" %}</a>
+{% block link %}
+    {% url "core:diaperchange-list" %}
 {% endblock %}
-{% block title %}
+{% block label %}
+    {% trans "Nappy" %}
+{% endblock %}
+{% block note_tone %}
+    {% if status.due_soon %}babyb-tone--warn{% else %}babyb-tone--muted{% endif %}
+{% endblock %}
+{% block note %}
+    {{ status.due }}
+{% endblock %}
+{% block value %}
     {% if change %}
-        <div>
-            {% blocktrans trimmed with time_ago=change.time|deltasince|duration_string:'m' %}
-                {{ time_ago }} ago
-            {% endblocktrans %}
-        </div>
-        <small>{{ change.time|time }}</small>
+        {{ status.elapsed }}
     {% else %}
         {% trans "None" %}
     {% endif %}
 {% endblock %}
-{% block content %}
-    {% if change %}{{ change.attributes|join:', ' }}{% endif %}
+{% block sub %}
+    {% if change %}
+        {% blocktrans trimmed with time=change.time|time %}
+            ago · {{ time }}
+        {% endblocktrans %}
+    {% endif %}
+{% endblock %}
+{% block meta %}
+    {% if change %}
+        {{ change.attributes|join:", "|lower }}
+        {% if status.interval %}
+            <span class="babyb-status-meta-line">
+                {% blocktrans trimmed with gap=status.interval %}
+                    usually every {{ gap }}
+                {% endblocktrans %}
+            </span>
+        {% endif %}
+    {% endif %}
 {% endblock %}

@@ -1,0 +1,83 @@
+{% load i18n %}
+<div class="babyb-quick-log">
+    {% if perms.core.add_feeding %}
+        <a class="babyb-quick babyb-act babyb-act--feeding"
+           href="{% url 'core:feeding-add' %}">
+            <span class="babyb-quick-tile" aria-hidden="true"><i class="icon-feeding"></i></span>
+            <span class="babyb-quick-text">
+                <span class="babyb-quick-full">{% trans "Log feeding" %}</span>
+                <span class="babyb-quick-short">{% trans "Feeding" %}</span>
+                <span class="babyb-quick-sub">{% trans "Bottle · breast" %}</span>
+            </span>
+        </a>
+    {% endif %}
+    {% if perms.core.add_diaperchange %}
+        <a class="babyb-quick babyb-act babyb-act--diaperchange"
+           href="{% url 'core:diaperchange-add' %}">
+            <span class="babyb-quick-tile" aria-hidden="true"><i class="icon-diaperchange"></i></span>
+            <span class="babyb-quick-text">
+                <span class="babyb-quick-full">{% trans "Log nappy" %}</span>
+                <span class="babyb-quick-short">{% trans "Nappy" %}</span>
+                <span class="babyb-quick-sub">{% trans "Wet · solid · both" %}</span>
+            </span>
+        </a>
+    {% endif %}
+    {% if perms.core.add_sleep %}
+        <a class="babyb-quick babyb-act babyb-act--sleep"
+           href="{% url 'core:sleep-add' %}">
+            <span class="babyb-quick-tile" aria-hidden="true">Zz</span>
+            <span class="babyb-quick-text">
+                <span class="babyb-quick-full">{% trans "Log sleep" %}</span>
+                <span class="babyb-quick-short">{% trans "Sleep" %}</span>
+                <span class="babyb-quick-sub">{% trans "Nap or night" %}</span>
+            </span>
+        </a>
+    {% endif %}
+    <div class="babyb-quick-more dropdown">
+        <button class="babyb-quick babyb-quick--more"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                aria-label="{% trans "More activities" %}">
+            <i class="icon-add" aria-hidden="true"></i><span class="babyb-quick-more-text">{% trans "More" %}</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end babyb-more-menu">
+            {% if perms.core.add_pumping %}
+                <a class="dropdown-item babyb-act babyb-act--pumping"
+                   href="{% url 'core:pumping-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true"><i class="icon-pumping"></i></span>{% trans "Pumping" %}
+                </a>
+            {% endif %}
+            {% if perms.core.add_medication %}
+                <a class="dropdown-item babyb-act babyb-act--medication"
+                   href="{% url 'core:medication-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true"><i class="icon-medication"></i></span>{% trans "Medicine" %}
+                </a>
+            {% endif %}
+            {% if perms.core.add_tummytime %}
+                <a class="dropdown-item babyb-act babyb-act--tummytime"
+                   href="{% url 'core:tummytime-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true"><i class="icon-tummytime"></i></span>{% trans "Tummy time" %}
+                </a>
+            {% endif %}
+            {% if perms.core.add_temperature %}
+                <a class="dropdown-item babyb-act babyb-act--temperature"
+                   href="{% url 'core:temperature-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true"><i class="icon-temperature"></i></span>{% trans "Temperature" %}
+                </a>
+            {% endif %}
+            {% if perms.core.add_weight %}
+                <a class="dropdown-item babyb-act babyb-act--weight"
+                   href="{% url 'core:weight-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true"><i class="icon-weight"></i></span>{% trans "Weight" %}
+                </a>
+            {% endif %}
+            {% if perms.core.add_note %}
+                <a class="dropdown-item babyb-act babyb-act--note"
+                   href="{% url 'core:note-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true"><i class="icon-note"></i></span>{% trans "Note" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

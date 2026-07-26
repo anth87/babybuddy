@@ -1,29 +1,45 @@
-{% extends 'cards/base.html' %}
+{% extends 'cards/status_base.html' %}
 {% load duration i18n %}
-{% block header %}
-    <a href="{% url "core:feeding-list" %}">{% trans "Last Feeding" %}</a>
+{% block link %}
+    {% url "core:feeding-list" %}
 {% endblock %}
-{% block title %}
+{% block label %}
+    {% trans "Feeding" %}
+{% endblock %}
+{% block note_tone %}
+    {% if status.due_soon %}babyb-tone--warn{% else %}babyb-tone--muted{% endif %}
+{% endblock %}
+{% block note %}
+    {{ status.due }}
+{% endblock %}
+{% block value %}
     {% if feeding %}
-        <div>
-            {% blocktrans trimmed with time_ago=feeding_diff_base|deltasince|duration_string:'m' %}
-                {{ time_ago }} ago
-            {% endblocktrans %}
-        </div>
-        <small>{{ feeding.start|time }}
-            {% if feeding.end != feeding.start %}- {{ feeding.end|time }}{% endif %}
-        </small>
+        {{ status.elapsed }}
     {% else %}
         {% trans "None" %}
     {% endif %}
 {% endblock %}
-{% block content %}
+{% block sub %}
+    {% if feeding %}
+        {% blocktrans trimmed with time=feeding.start|time %}
+            ago · {{ time }}
+        {% endblocktrans %}
+    {% endif %}
+{% endblock %}
+{% block meta %}
     {% if feeding %}
         {{ feeding.get_type_display }}, {{ feeding.get_method_display }}
         {% if feeding.amount %}
             {% blocktrans trimmed with amount=feeding.amount|floatformat:"0g" %}
                 ({{ amount }} mL)
             {% endblocktrans %}
+        {% endif %}
+        {% if status.interval %}
+            <span class="babyb-status-meta-line">
+                {% blocktrans trimmed with gap=status.interval %}
+                    usually every {{ gap }}
+                {% endblocktrans %}
+            </span>
         {% endif %}
     {% endif %}
 {% endblock %}

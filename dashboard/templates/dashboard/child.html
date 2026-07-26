@@ -12,27 +12,25 @@
 {% endblock %}
 {% block content %}
     {% include 'dashboard/page_head.html' %}
-    <div id="dashboard-child"
-         class="row"
-         data-masonry='{"percentPosition": true }'>
-        <div class="col-sm-6 col-lg-4">{% card_timer_list object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_feeding_last object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_diaperchange_last object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_pumping_last object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_pumping_recent object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_sleep_last object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_medication_last object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_feeding_last_method object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_feeding_recent object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_statistics object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_sleep_recent object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_sleep_naps_day object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_tummytime_day object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_diaperchange_types object %}</div>
-        <div class="col-sm-6 col-lg-4">{% card_breastfeeding object %}</div>
+    <div id="dashboard-child" class="babyb-dashboard">
+        {% include 'dashboard/_quick_log.html' %}
+        {% card_timer_list object %}
+        <div class="babyb-status-strip">
+            {% card_feeding_last object %}
+            {% card_diaperchange_last object %}
+            {% card_sleep_last object %}
+            {% card_pumping_last object %}
+            {% card_medication_last object %}
+            {% card_tummytime_day object %}
+        </div>
+        <div class="babyb-dashboard-columns">
+            {% include 'dashboard/_today.html' %}
+            {% card_trends object %}
+        </div>
     </div>
 {% endblock %}
 {% block javascript %}
+    <script type="application/javascript">BabyBuddy.DashboardTrends.init();</script>
     {% if user.settings.dashboard_refresh_rate %}
         <script type="application/javascript">
             BabyBuddy.Dashboard.watch('dashboard-child', {{ user.settings.dashboard_refresh_rate_milliseconds }});

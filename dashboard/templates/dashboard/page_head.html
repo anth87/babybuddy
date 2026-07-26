@@ -1,14 +1,44 @@
-{% load i18n %}
+{% load duration i18n %}
 {% now "G" as babyb_hour %}
 <div class="babyb-page-head">
-    <div class="babyb-eyebrow">{% now "l" %} · {% now "F j" %}</div>
-    <h1 class="babyb-greeting">
-        {% if babyb_hour|add:0 < 12 %}
-            {% blocktrans with name=user.first_name|default:user.get_username %}Good morning, {{ name }}{% endblocktrans %}
-        {% elif babyb_hour|add:0 < 18 %}
-            {% blocktrans with name=user.first_name|default:user.get_username %}Good afternoon, {{ name }}{% endblocktrans %}
-        {% else %}
-            {% blocktrans with name=user.first_name|default:user.get_username %}Good evening, {{ name }}{% endblocktrans %}
+    <div class="babyb-page-head-text">
+        <div class="babyb-eyebrow">{% now "l" %} · {% now "F j" %}</div>
+        <h1 class="babyb-greeting">
+            {% if babyb_hour|add:0 < 12 %}
+                {% blocktrans with name=user.first_name|default:user.get_username %}Good morning, {{ name }}{% endblocktrans %}
+            {% elif babyb_hour|add:0 < 18 %}
+                {% blocktrans with name=user.first_name|default:user.get_username %}Good afternoon, {{ name }}{% endblocktrans %}
+            {% else %}
+                {% blocktrans with name=user.first_name|default:user.get_username %}Good evening, {{ name }}{% endblocktrans %}
+            {% endif %}
+        </h1>
+        {% if object %}
+            <p class="babyb-page-sub">
+                {% blocktrans trimmed with name=object.first_name age=object.birth_datetime|child_age_string %}
+                    {{ name }} is {{ age }} old
+                {% endblocktrans %}
+                ·
+                {% blocktrans trimmed count counter=timeline_objects|length %}
+                    {{ counter }} entry logged today
+                {% plural %}
+                    {{ counter }} entries logged today
+                {% endblocktrans %}
+            </p>
         {% endif %}
-    </h1>
+    </div>
+    {% if switch_children %}
+        <div class="babyb-child-switch"
+             role="group"
+             aria-label="{% trans "Switch child" %}">
+            <span class="babyb-child-pill is-active">
+                <span class="babyb-child-initial">{{ object.first_name|slice:":1" }}</span>{{ object.first_name }}
+            </span>
+            {% for sibling in switch_children %}
+                <a class="babyb-child-pill"
+                   href="{% url 'dashboard:dashboard-child' sibling.slug %}">
+                    <span class="babyb-child-initial">{{ sibling.first_name|slice:":1" }}</span>{{ sibling.first_name }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>

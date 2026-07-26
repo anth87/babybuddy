@@ -2,19 +2,105 @@
 from django import template
 from django.db.models import Avg, Count, Q, Sum
 from django.db.models.functions import TruncDate
-from django.utils import timezone
+from django.utils import formats, timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 
 import collections
 
 from core import models
 from core.templatetags.misc import feeding_time_diff_base
+from core.utils import duration_parts
 
 register = template.Library()
 
 
 def _hide_empty(context):
     return context["request"].user.settings.dashboard_hide_empty
+
+
+def _elapsed(duration):
+    """Format a timedelta compactly for a status tile, e.g. "1h 09m" or "12m"."""
+    if not isinstance(duration, timezone.timedelta):
+        return ""
+    h, m, s = duration_parts(duration)
+    if h >= 24:
+        return "%dd %dh" % (h // 24, h % 24)
+    if h > 0:
+        return "%dh %02dm" % (h, m)
+    return "%dm" % m
+
+
+def _stale(instance, model, child, field):
+    """
+    Whether an activity should drop off the dashboard entirely.
+
+    An activity earns its place only by having been logged in the past seven
+    days, which is the same rule the trends chart uses to decide its tabs.
+
+    :param instance: the most recent instance, or None.
+    :param model: the model to look for recent entries in.
+    :param field: the name of that model's timestamp field.
+    :returns: True when the activity should be hidden.
+    """
+    if not instance:
+        return True
+    return not _logged_recently(model, child, field)
+
+
+def _logged_recently(model, child, field):
+    """Whether a child has any entry of this type in the past seven days."""
+    cutoff = timezone.localtime() - timezone.timedelta(days=7)
+    return model.objects.filter(child=child, **{field + "__gte": cutoff}).exists()
+
+
+def _status(last_time, interval):
+    """
+    Progress of the current wait against how long the wait usually is.
+
+    Both values come from data the cards already compute, so this only shapes
+    them for the status tile: how long it has been, how far through a typical
+    gap that is, and when the next one is roughly due.
+
+    :param last_time: when the activity last happened, or None.
+    :param interval: the typical gap between occurrences, or a falsy value.
+    :returns: a dictionary for the status tile.
+    """
+    if not last_time:
+        return {
+            "since": None,
+            "elapsed": "",
+            "pct": 0,
+            "due": "",
+            "due_soon": False,
+            "has_meter": False,
+        }
+
+    since = timezone.localtime() - timezone.localtime(last_time)
+    # Without a known interval there is nothing to measure progress against, so
+    # the tile shows the elapsed time only rather than a meter reading "full".
+    status = {
+        "since": since,
+        "elapsed": _elapsed(since),
+        "pct": 0,
+        "due": "",
+        "due_soon": False,
+        "has_meter": False,
+    }
+
+    if isinstance(interval, timezone.timedelta) and interval:
+        status["has_meter"] = True
+        status["pct"] = max(0, min(100, round(since / interval * 100)))
+        remaining = interval - since
+        if remaining > timezone.timedelta():
+            status["due"] = _("Due in ~%(time)s") % {"time": _elapsed(remaining)}
+            status["due_soon"] = remaining < timezone.timedelta(minutes=30)
+        else:
+            status["due"] = _("Due now")
+            status["due_soon"] = True
+        status["interval"] = _elapsed(interval)
+
+    return status
 
 
 def _filter_data_age(context, keyword="end"):
@@ -41,9 +127,15 @@ def card_diaperchange_last(context, child):
     )
     empty = not instance
 
+    # Reuse the frequency already computed for the statistics card (past 3 days).
+    statistics = _diaperchange_statistics(child) if instance else None
+    interval = statistics[0]["btwn_average"] if statistics else None
+
     return {
         "type": "diaperchange",
         "change": instance,
+        "status": _status(instance.time if instance else None, interval),
+        "stale": _stale(instance, models.DiaperChange, child, "time"),
         "empty": empty,
         "hide_empty": _hide_empty(context),
     }
@@ -237,11 +329,18 @@ def card_feeding_last(context, child):
         .first()
     )
     empty = not instance
+    diff_base = feeding_time_diff_base(context, instance)
+
+    # Reuse the frequency already computed for the statistics card (past 3 days).
+    statistics = _feeding_statistics(child) if instance else None
+    interval = statistics[0]["btwn_average"] if statistics else None
 
     return {
         "type": "feeding",
         "feeding": instance,
-        "feeding_diff_base": feeding_time_diff_base(context, instance),
+        "feeding_diff_base": diff_base,
+        "status": _status(diff_base, interval),
+        "stale": _stale(instance, models.Feeding, child, "start"),
         "empty": empty,
         "hide_empty": _hide_empty(context),
     }
@@ -289,6 +388,8 @@ def card_pumping_last(context, child):
     return {
         "type": "pumping",
         "pumping": instance,
+        "status": _status(instance.end if instance else None, None),
+        "stale": _stale(instance, models.Pumping, child, "start"),
         "empty": empty,
         "hide_empty": _hide_empty(context),
     }
@@ -347,9 +448,15 @@ def card_sleep_last(context, child):
     )
     empty = not instance
 
+    # Reuse the average awake duration already computed for the statistics card.
+    statistics = _sleep_statistics(child) if instance else None
+    interval = statistics["btwn_average"] if statistics else None
+
     return {
         "type": "sleep",
         "sleep": instance,
+        "status": _status(instance.end if instance else None, interval),
+        "stale": _stale(instance, models.Sleep, child, "end"),
         "empty": empty,
         "hide_empty": _hide_empty(context),
     }
@@ -878,12 +985,237 @@ def card_tummytime_day(context, child, date=None):
     for instance in instances:
         stats["total"] += timezone.timedelta(seconds=instance.duration.seconds)
 
+    last = instances.first()
+
     return {
         "type": "tummytime",
         "stats": stats,
         "instances": instances,
-        "last": instances.first(),
+        "last": last,
+        # Progress toward the day's tummy time rather than a wait between events.
+        "status": {
+            "elapsed": _elapsed(stats["total"]) or "0m",
+            "pct": max(
+                0,
+                min(100, round(stats["total"] / timezone.timedelta(minutes=20) * 100)),
+            ),
+            "has_meter": True,
+            "goal_met": stats["total"] >= timezone.timedelta(minutes=20),
+            "last_time": last.end if last else None,
+        },
+        # Today can legitimately be empty while the week still has sessions, so
+        # this looks at the week rather than at today's instances.
+        "stale": not _logged_recently(models.TummyTime, child, "start"),
         "empty": empty,
+        "hide_empty": _hide_empty(context),
+    }
+
+
+# Minimum bar height, as a percentage of the chart, so a low-but-nonzero day
+# stays visible next to a tall one.
+MIN_BAR_PCT = 6
+
+
+def _trend_days(values, displays, headlines, sublines, lower=None):
+    """
+    Turn a seven-day series into bar geometry for the trends chart.
+    :param values: seven numbers, oldest first, driving the bar heights.
+    :param lower: optional seven numbers for the darker stacked segment.
+    :returns: a (days, average_pct) tuple.
+    """
+    peak = max(values) or 1
+    days = []
+    today = timezone.localtime().date()
+    for index, value in enumerate(values):
+        date = today - timezone.timedelta(days=6 - index)
+        height = MIN_BAR_PCT if not value else max(MIN_BAR_PCT, value / peak * 100)
+        days.append(
+            {
+                "index": index,
+                "letter": formats.date_format(date, "D")[0],
+                "name": _("Today") if index == 6 else formats.date_format(date, "l"),
+                "today": index == 6,
+                "display": displays[index],
+                "headline": headlines[index],
+                "subline": sublines[index],
+                "height": round(height, 2),
+                # Percentage of *this bar* taken by the darker lower segment.
+                "lower": round(lower[index] / value * 100, 2) if lower and value else 0,
+            }
+        )
+    average_pct = round(min(100, (sum(values) / 7) / peak * 100), 2)
+    return days, average_pct
+
+
+def _amount(value):
+    """Format a millilitre amount the way the rest of the app does."""
+    return formats.number_format(round(value), decimal_pos=0, force_grouping=True)
+
+
+@register.inclusion_tag("cards/trends.html", takes_context=True)
+def card_trends(context, child):
+    """
+    A tabbed seven-day chart, assembled from the existing "recent" cards so the
+    dashboard does not query the same data twice.
+    :param child: an instance of the Child model.
+    :returns: a dictionary with one entry per activity that has recent data.
+    """
+    metrics = []
+
+    # Feeding: amounts when they are recorded, counts for breastfed children.
+    feeding = card_feeding_recent(context, child)
+    if not feeding["empty"]:
+        recent = list(reversed(feeding["feedings"][:7]))
+        by_amount = sum(day["total"] for day in recent) > 0
+        values = [day["total"] if by_amount else day["count"] for day in recent]
+        if by_amount:
+            displays = [_amount(day["total"]) for day in recent]
+            headlines = [
+                _("%(amount)s mL") % {"amount": _amount(day["total"])} for day in recent
+            ]
+        else:
+            displays = [str(day["count"]) for day in recent]
+            headlines = [
+                ngettext("%(count)s feeding", "%(count)s feedings", day["count"])
+                % {"count": day["count"]}
+                for day in recent
+            ]
+        sublines = [
+            ngettext("%(count)s feeding", "%(count)s feedings", day["count"])
+            % {"count": day["count"]}
+            for day in recent
+        ]
+        days, average_pct = _trend_days(values, displays, headlines, sublines)
+        statistics = _feeding_statistics(child)
+        metrics.append(
+            {
+                "key": "feeding",
+                "label": _("Feeding"),
+                "days": days,
+                "average_pct": average_pct,
+                "average_label": (
+                    _("Daily average: %(amount)s mL")
+                    % {"amount": _amount(sum(values) / 7)}
+                    if by_amount
+                    else _("Daily average: %(count)s feedings")
+                    % {"count": formats.number_format(sum(values) / 7, decimal_pos=1)}
+                ),
+                "interval": (
+                    _elapsed(statistics[0]["btwn_average"]) if statistics else ""
+                ),
+                "total": (
+                    _("%(amount)s mL") % {"amount": _amount(sum(values))}
+                    if by_amount
+                    else str(int(sum(values)))
+                ),
+                "split": False,
+            }
+        )
+
+    # Nappies: total changes per day, with the solid share as the lower segment.
+    nappies = card_diaperchange_types(context, child)
+    if not nappies["empty"]:
+        recent = [nappies["stats"][index] for index in range(6, -1, -1)]
+        values = [day["changes"] for day in recent]
+        solids = [day["solid"] for day in recent]
+        displays = [str(int(day["changes"])) for day in recent]
+        headlines = [
+            ngettext("%(count)s change", "%(count)s changes", int(day["changes"]))
+            % {"count": int(day["changes"])}
+            for day in recent
+        ]
+        sublines = [
+            _("%(wet)d wet · %(dirty)d dirty")
+            % {"wet": day["changes"] - day["solid"], "dirty": day["solid"]}
+            for day in recent
+        ]
+        days, average_pct = _trend_days(values, displays, headlines, sublines, solids)
+        statistics = _diaperchange_statistics(child)
+        metrics.append(
+            {
+                "key": "diaperchange",
+                "label": _("Nappies"),
+                "days": days,
+                "average_pct": average_pct,
+                "average_label": _("Daily average: %(count)s changes")
+                % {"count": formats.number_format(sum(values) / 7, decimal_pos=1)},
+                "interval": (
+                    _elapsed(statistics[0]["btwn_average"]) if statistics else ""
+                ),
+                "total": str(int(sum(values))),
+                "split": True,
+            }
+        )
+
+    # Sleep: hours per day, already split across midnight by the recent card.
+    sleep = card_sleep_recent(context, child)
+    if not sleep["empty"]:
+        recent = list(reversed(sleep["sleeps"][:7]))
+        values = [day["total"].total_seconds() / 3600 for day in recent]
+        displays = [
+            "%dh" % round(value) if value >= 1 else "%dm" % round(value * 60)
+            for value in values
+        ]
+        headlines = [_elapsed(day["total"]) or "0m" for day in recent]
+        sublines = [
+            ngettext("%(count)s sleep", "%(count)s sleeps", day["count"])
+            % {"count": day["count"]}
+            for day in recent
+        ]
+        days, average_pct = _trend_days(values, displays, headlines, sublines)
+        statistics = _sleep_statistics(child)
+        metrics.append(
+            {
+                "key": "sleep",
+                "label": _("Sleep"),
+                "days": days,
+                "average_pct": average_pct,
+                "average_label": _("Daily average: %(total)s")
+                % {"total": _elapsed(timezone.timedelta(hours=sum(values) / 7))},
+                "interval": (
+                    _elapsed(statistics["btwn_average"]) + " " + _("awake")
+                    if statistics
+                    else ""
+                ),
+                "total": _elapsed(timezone.timedelta(hours=sum(values))),
+                "split": False,
+            }
+        )
+
+    # Pumping: millilitres per day.
+    pumping = card_pumping_recent(context, child)
+    if not pumping["empty"]:
+        recent = list(reversed(pumping["pumpings"][:7]))
+        values = [day["total"] for day in recent]
+        displays = [_amount(day["total"]) for day in recent]
+        headlines = [
+            _("%(amount)s mL") % {"amount": _amount(day["total"])} for day in recent
+        ]
+        sublines = [
+            ngettext("%(count)s session", "%(count)s sessions", day["count"])
+            % {"count": day["count"]}
+            for day in recent
+        ]
+        days, average_pct = _trend_days(values, displays, headlines, sublines)
+        metrics.append(
+            {
+                "key": "pumping",
+                "label": _("Pumping"),
+                "days": days,
+                "average_pct": average_pct,
+                "average_label": _("Daily average: %(amount)s mL")
+                % {"amount": _amount(sum(values) / 7)},
+                "interval": "",
+                "total": _("%(amount)s mL") % {"amount": _amount(sum(values))},
+                "split": False,
+            }
+        )
+
+    return {
+        "child": child,
+        "metrics": metrics,
+        "default": metrics[0] if metrics else None,
+        "empty": not metrics,
         "hide_empty": _hide_empty(context),
     }
 
@@ -906,6 +1238,11 @@ def card_medication_last(context, child):
     return {
         "type": "medication",
         "medication": instance,
+        "status": _status(
+            instance.time if instance else None,
+            instance.next_dose_interval if instance else None,
+        ),
+        "stale": _stale(instance, models.Medication, child, "time"),
         "empty": not instance,
         "hide_empty": _hide_empty(context),
     }

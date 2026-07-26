@@ -1,23 +1,35 @@
-{% extends 'cards/base.html' %}
+{% extends 'cards/status_base.html' %}
 {% load duration i18n %}
-{% block header %}
-    <a href="{% url "core:tummytime-list" %}">{% trans "Today's Tummy Time" %}</a>
+{% block link %}
+    {% url "core:tummytime-list" %}
 {% endblock %}
-{% block title %}
+{% block label %}
+    {% trans "Tummy time" %}
+{% endblock %}
+{% block note_tone %}
+    {% if status.goal_met %}babyb-tone--ok{% else %}babyb-tone--warn{% endif %}
+{% endblock %}
+{% block note %}
+    {% trans "Goal 20m" %}
+{% endblock %}
+{% block value %}
     {% if stats.count > 0 %}
-        {{ stats.total|duration_string }}
+        {{ status.elapsed }}
     {% else %}
         {% trans "None" %}
     {% endif %}
 {% endblock %}
-{% block listgroup %}
-    <ul class="list-group list-group-flush text-body-secondary small">
-        {% for instance in instances %}
-            <li class="list-group-item">
-                {% blocktrans trimmed with duration=instance.duration|duration_string end=instance.end|time %}
-                    {{ duration }} at {{ end }}
-                {% endblocktrans %}
-            </li>
-        {% endfor %}
-    </ul>
+{% block sub %}
+    {% blocktrans trimmed count counter=stats.count %}
+        today · {{ counter }} session
+    {% plural %}
+        today · {{ counter }} sessions
+    {% endblocktrans %}
+{% endblock %}
+{% block meta %}
+    {% if last %}
+        {% blocktrans trimmed with time=last.end|time %}
+            Last at {{ time }}
+        {% endblocktrans %}
+    {% endif %}
 {% endblock %}

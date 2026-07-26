@@ -1,0 +1,35 @@
+{% comment %}
+Compact status tile used across the dashboard's status strip. Each activity's
+"last" card extends this and fills in only the copy; the shape, meter and
+per-activity color come from here.
+
+An activity with nothing logged in the past seven days is dropped entirely,
+matching the rule the trends chart uses to decide which tabs to offer.
+{% endcomment %}
+{% if not stale %}
+    <a class="babyb-status babyb-act babyb-act--{{ type }}"
+       href="{% block link %}{% endblock %}">
+        <span class="babyb-status-head">
+            <span class="babyb-status-label">
+                {% block label %}{% endblock %}
+            </span>
+            <span class="babyb-status-note {% block note_tone %}babyb-tone--muted{% endblock %}">
+                {% block note %}{% endblock %}
+            </span>
+        </span>
+        <span class="babyb-status-value">
+            <span class="babyb-status-number">
+                {% block value %}{% endblock %}
+            </span>
+            <span class="babyb-status-sub">
+                {% block sub %}{% endblock %}
+            </span>
+        </span>
+        {% if status.has_meter %}{# djlint:off #}
+            <span class="babyb-meter"><span class="babyb-meter-fill" style="width:{{ status.pct }}%"></span></span>
+            {# djlint:on #}{% endif %}
+        <span class="babyb-status-meta">
+            {% block meta %}{% endblock %}
+        </span>
+    </a>
+{% endif %}

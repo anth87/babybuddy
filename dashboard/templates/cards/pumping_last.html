@@ -1,22 +1,29 @@
-{% extends 'cards/base.html' %}
+{% extends 'cards/status_base.html' %}
 {% load duration i18n %}
-{% block header %}
-    <a href="{% url "core:pumping-list" %}">{% trans "Last Pumping" %}</a>
+{% block link %}
+    {% url "core:pumping-list" %}
 {% endblock %}
-{% block title %}
+{% block label %}
+    {% trans "Pumping" %}
+{% endblock %}
+{% block value %}
     {% if pumping %}
-        <div>
-            {% blocktrans trimmed with time_ago=pumping.start|deltasince|duration_string:'m' %}
-                {{ time_ago }} ago
-            {% endblocktrans %}
-        </div>
-        <small>{{ pumping.start|time }}</small>
+        {{ status.elapsed }}
     {% else %}
         {% trans "None" %}
     {% endif %}
 {% endblock %}
-{% block content %}
+{% block sub %}
     {% if pumping %}
-        {% trans "Amount" %}: {{ pumping.amount }}
+        {% blocktrans trimmed with time=pumping.start|time %}
+            ago · {{ time }}
+        {% endblocktrans %}
+    {% endif %}
+{% endblock %}
+{% block meta %}
+    {% if pumping %}
+        {% blocktrans trimmed with amount=pumping.amount|floatformat:"0g" %}
+            {{ amount }} mL
+        {% endblocktrans %}
     {% endif %}
 {% endblock %}

@@ -1,7 +1,12 @@
 // Baby Saliba dashboard page styles.
 
-// Greeting header: violet uppercase eyebrow over a Bricolage display line.
+// Greeting header: violet uppercase eyebrow over a Bricolage display line,
+// with the child switcher pushed to the far right on wide screens.
 .babyb-page-head {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
     margin-bottom: 24px;
 
     .babyb-greeting {
@@ -9,6 +14,16 @@
         letter-spacing: -0.02em;
         margin: 6px 0 0;
     }
+
+    .babyb-page-sub {
+        margin: 8px 0 0;
+        font-size: 15px;
+        color: $slate;
+    }
+}
+
+.babyb-page-head-text {
+    min-width: 0;
 }
 
 .babyb-eyebrow {
@@ -18,6 +33,834 @@
     text-transform: uppercase;
     color: $voltage-violet;
 }
+
+// Pill row for switching between children.
+.babyb-child-switch {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    padding: 5px;
+    background-color: $white;
+    border: 1px solid #e6eaf1;
+    border-radius: $border-radius-pill;
+}
+
+.babyb-child-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 14px 6px 7px;
+    border-radius: $border-radius-pill;
+    font-size: 14px;
+    font-weight: 500;
+    color: $slate;
+
+    &:hover {
+        background-color: $fog;
+        color: $midnight-ink;
+    }
+
+    .babyb-child-initial {
+        width: 28px;
+        height: 28px;
+        border-radius: $border-radius-pill;
+        background-color: #eef1f6;
+        color: $slate;
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &.is-active {
+        background-color: $lavender-tint;
+        color: $voltage-violet;
+        font-weight: 600;
+
+        .babyb-child-initial {
+            background: linear-gradient(140deg, #c9a2f6, $voltage-violet);
+            color: $white;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Per-activity color. Each activity contributes one hue, exposed as custom
+// properties so bars, dots, tiles and meters can all pull from one place.
+// ---------------------------------------------------------------------------
+.babyb-act {
+    --act-rgb: 107, 117, 137;
+    --act-tint: #{$fog};
+    --act-ink: #{$graphite};
+    --act-fill: rgb(var(--act-rgb));
+    --act-soft: rgba(var(--act-rgb), 0.3);
+    --act-ring: rgba(var(--act-rgb), 0.55);
+}
+
+.babyb-act--feeding {
+    --act-rgb: 134, 47, 231;
+    --act-tint: #{$lavender-tint};
+    --act-ink: #862fe7;
+}
+
+.babyb-act--diaperchange {
+    --act-rgb: 220, 95, 5;
+    --act-tint: #{$peach-tint};
+    --act-ink: #dc5f05;
+}
+
+.babyb-act--sleep {
+    --act-rgb: 18, 185, 129;
+    --act-tint: #{$mint-tint};
+    --act-ink: #0f7a52;
+}
+
+.babyb-act--pumping {
+    --act-rgb: 14, 116, 144;
+    --act-tint: #e4f6f8;
+    --act-ink: #0e7490;
+}
+
+.babyb-act--medication {
+    --act-rgb: 225, 29, 72;
+    --act-tint: #fdecec;
+    --act-ink: #e11d48;
+}
+
+.babyb-act--tummytime {
+    --act-rgb: 95, 37, 158;
+    --act-tint: #f0e7fb;
+    --act-ink: #5f259e;
+}
+
+.babyb-act--temperature,
+.babyb-act--weight,
+.babyb-act--note {
+    --act-rgb: 63, 70, 84;
+    --act-tint: #{$fog};
+    --act-ink: #{$graphite};
+}
+
+// Tone modifiers for the small note text in status tiles and stat tiles.
+.babyb-tone--warn {
+    color: #dc5f05;
+}
+
+.babyb-tone--ok,
+.babyb-tone--up {
+    color: $chip-green;
+}
+
+.babyb-tone--muted,
+.babyb-tone--flat {
+    color: $slate;
+}
+
+.babyb-tone--down {
+    color: $graphite;
+}
+
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
+.babyb-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.babyb-dashboard-columns {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 991.98px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.babyb-panel {
+    background-color: $white;
+    border: 1px solid #edf0f5;
+    border-radius: 22px;
+    padding: 22px;
+}
+
+.babyb-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.babyb-panel-title {
+    font-family: $headings-font-family;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.babyb-count {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: $slate;
+    background-color: $fog;
+    border-radius: $border-radius-pill;
+    padding: 4px 11px;
+    white-space: nowrap;
+}
+
+.babyb-panel-link {
+    margin-left: auto;
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.babyb-empty {
+    margin: 0;
+    padding: 18px 4px;
+    font-size: 14px;
+    color: $slate;
+}
+
+// ---------------------------------------------------------------------------
+// Quick log row
+// ---------------------------------------------------------------------------
+.babyb-quick-log {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    gap: 12px;
+
+    @media (max-width: 767.98px) {
+        grid-template-columns: 1.35fr 1fr 1fr auto;
+        gap: 8px;
+    }
+}
+
+.babyb-quick {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px 18px;
+    background-color: $white;
+    border: 1px solid #e6eaf1;
+    border-radius: 18px;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: $midnight-ink;
+    text-align: left;
+
+    &:hover {
+        color: $midnight-ink;
+        border-color: var(--act-fill, #{$voltage-violet});
+        background-color: var(--act-tint, #{$lavender-tint});
+    }
+
+    .babyb-quick-tile {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background-color: var(--act-tint);
+        color: var(--act-ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .babyb-quick-text {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        min-width: 0;
+    }
+
+    // The short label only appears once the buttons collapse on mobile.
+    .babyb-quick-short {
+        display: none;
+    }
+
+    .babyb-quick-sub {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #8b93a5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.babyb-quick--more {
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    height: 100%;
+    padding: 16px 20px;
+    font-size: 14.5px;
+    color: $graphite;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded="true"] {
+        border-color: $voltage-violet;
+        background-color: $white;
+        color: $voltage-violet;
+    }
+}
+
+.babyb-more-menu {
+    width: 238px;
+    padding: 8px;
+    border-radius: 18px;
+    box-shadow: 0 24px 48px -24px rgba(17, 24, 39, 0.34);
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 9px 10px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: $midnight-ink;
+
+        &:hover {
+            background-color: #f5f6f9;
+        }
+    }
+
+    .babyb-more-tile {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        background-color: var(--act-tint);
+        color: var(--act-ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+}
+
+// On narrow screens the quick log collapses to icon-and-word buttons.
+@media (max-width: 767.98px) {
+    .babyb-quick {
+        flex-direction: row;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 8px;
+        height: 52px;
+        border-radius: 16px;
+        font-size: 14px;
+
+        .babyb-quick-tile {
+            width: auto;
+            height: auto;
+            background: none;
+            font-size: 16px;
+        }
+
+        .babyb-quick-text {
+            white-space: nowrap;
+        }
+
+        .babyb-quick-full,
+        .babyb-quick-sub {
+            display: none;
+        }
+
+        .babyb-quick-short {
+            display: inline;
+        }
+    }
+
+    .babyb-quick--more {
+        width: 52px;
+        padding: 0;
+
+        .babyb-quick-more-text {
+            display: none;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Running timers
+// ---------------------------------------------------------------------------
+.babyb-timers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.babyb-timer-running {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 15px;
+    background-color: $mint-tint;
+    border-radius: $border-radius-pill;
+    font-size: 13px;
+    font-weight: 600;
+    color: $chip-green;
+
+    &:hover {
+        color: $chip-green;
+        background-color: #dcf5ea;
+    }
+
+    .babyb-timer-running-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: $border-radius-pill;
+        background-color: $accent-green;
+        box-shadow: 0 0 0 3px rgba(18, 185, 129, 0.18);
+    }
+
+    .babyb-timer-running-time {
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Status strip
+// ---------------------------------------------------------------------------
+.babyb-status-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(216px, 1fr));
+    gap: 12px;
+    padding: 16px;
+    background-color: $white;
+    border: 1px solid #edf0f5;
+    border-radius: 22px;
+
+    @media (max-width: 575.98px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+}
+
+.babyb-status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    background-color: #f8f9fc;
+    border-radius: 16px;
+    color: $midnight-ink;
+
+    &:hover {
+        color: $midnight-ink;
+        background-color: #f2f4f9;
+    }
+
+    .babyb-status-head {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    // No leading dot: it would indent the label out of line with the value,
+    // meter and meta below it. The activity color rides on the label instead.
+    .babyb-status-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--act-ink);
+    }
+
+    .babyb-status-note {
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .babyb-status-value {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .babyb-status-number {
+        font-family: $headings-font-family;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 1;
+    }
+
+    .babyb-status-sub {
+        font-size: 12.5px;
+        color: $slate;
+    }
+
+    .babyb-status-meta {
+        font-size: 12px;
+        color: #8b93a5;
+    }
+
+    // "usually every 4h 07m" always gets its own line rather than trailing the
+    // activity detail and wrapping mid-phrase.
+    .babyb-status-meta-line {
+        display: block;
+    }
+}
+
+.babyb-meter {
+    display: block;
+    height: 6px;
+    border-radius: $border-radius-pill;
+    background-color: #e9edf4;
+    overflow: hidden;
+
+    .babyb-meter-fill {
+        display: block;
+        height: 100%;
+        border-radius: $border-radius-pill;
+        background-color: var(--act-fill);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Today's entries
+// ---------------------------------------------------------------------------
+.babyb-today {
+    padding-bottom: 12px;
+}
+
+.babyb-events {
+    display: flex;
+    flex-direction: column;
+}
+
+.babyb-event {
+    display: grid;
+    grid-template-columns: 62px 40px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 8px;
+    border-radius: 14px;
+
+    &:hover {
+        background-color: #f8f9fc;
+    }
+
+    .babyb-event-time {
+        font-size: 13px;
+        font-weight: 600;
+        color: $graphite;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .babyb-event-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background-color: var(--act-tint);
+        color: var(--act-ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        justify-self: center;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .babyb-event-body {
+        min-width: 0;
+    }
+
+    .babyb-event-title {
+        font-size: 14.5px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    .babyb-event-detail {
+        font-size: 12.5px;
+        color: #8b93a5;
+        margin-top: 2px;
+    }
+
+    .babyb-event-edit {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background-color: #f4f6fa;
+        color: $slate;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+
+        &:hover {
+            background-color: $voltage-violet;
+            color: $white;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        grid-template-columns: 34px 1fr auto;
+        gap: 12px;
+        padding: 10px 4px;
+
+        .babyb-event-time {
+            grid-column: 3;
+            grid-row: 1;
+            font-size: 12.5px;
+            color: $slate;
+        }
+
+        .babyb-event-edit {
+            display: none;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Past 7 days
+// ---------------------------------------------------------------------------
+.babyb-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 20px;
+    background-color: #f4f6fa;
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+.babyb-tab {
+    flex: 1 0 auto;
+    padding: 9px 11px;
+    border: none;
+    border-radius: 9px;
+    background: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: $slate;
+    cursor: pointer;
+
+    &.is-active {
+        background-color: $white;
+        color: $midnight-ink;
+        box-shadow: 0 1px 3px rgba(17, 24, 39, 0.12);
+    }
+}
+
+.babyb-trend-headline {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+
+    .babyb-trend-value {
+        font-family: $headings-font-family;
+        font-size: 34px;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 1;
+    }
+
+    .babyb-trend-day {
+        font-size: 13.5px;
+        color: $slate;
+    }
+}
+
+.babyb-trend-sub {
+    font-size: 13px;
+    color: #8b93a5;
+    margin-bottom: 22px;
+}
+
+.babyb-chart {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    height: 150px;
+    border-bottom: 1px solid #eef1f6;
+}
+
+.babyb-chart-average {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed #c9a2f6;
+    pointer-events: none;
+}
+
+.babyb-bar {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 6px;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    .babyb-bar-value {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #8b93a5;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .babyb-bar-track {
+        position: relative;
+        align-self: end;
+        width: 100%;
+        min-height: 4px;
+        border-radius: 8px 8px 4px 4px;
+        background-color: var(--act-soft);
+        overflow: hidden;
+        transition: box-shadow 0.15s ease;
+    }
+
+    .babyb-bar-lower {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(63, 70, 84, 0.42);
+    }
+
+    &.is-today .babyb-bar-track,
+    &.is-active .babyb-bar-track {
+        background-color: var(--act-fill);
+    }
+
+    &.is-today .babyb-bar-lower,
+    &.is-active .babyb-bar-lower {
+        background-color: $graphite;
+    }
+
+    &.is-active {
+        .babyb-bar-value {
+            color: $midnight-ink;
+        }
+
+        .babyb-bar-track {
+            box-shadow: 0 0 0 2px var(--act-ring);
+        }
+    }
+}
+
+.babyb-chart-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+
+    .babyb-chart-day {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: #8b93a5;
+
+        &.is-today {
+            color: $voltage-violet;
+        }
+
+        &.is-active {
+            color: var(--act-ink);
+        }
+    }
+}
+
+.babyb-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+
+    .babyb-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12.5px;
+        color: $slate;
+
+        &::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            background-color: var(--act-fill);
+        }
+
+        &.babyb-legend-item--lower::before {
+            background-color: $graphite;
+        }
+    }
+}
+
+.babyb-trend-average {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $hairline;
+    font-size: 12.5px;
+    color: $slate;
+
+    .babyb-trend-average-line {
+        width: 16px;
+        border-top: 1px dashed #c9a2f6;
+        flex-shrink: 0;
+    }
+}
+
+.babyb-trend-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+
+    .babyb-trend-stat {
+        padding: 13px 14px;
+        background-color: #f8f9fc;
+        border-radius: 14px;
+    }
+
+    .babyb-trend-stat-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8b93a5;
+        margin-bottom: 5px;
+    }
+
+    .babyb-trend-stat-value {
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Multi-child dashboard (unchanged layout, kept for the overview page)
+// ---------------------------------------------------------------------------
 
 // Square icon action buttons for a child (dashboard / timeline / reports / edit).
 .child-actions {
