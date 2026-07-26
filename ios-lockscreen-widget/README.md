@@ -1,11 +1,19 @@
-# Baby Buddy "Last fed" lock-screen widget (iOS)
+# Baby Buddy lock-screen widgets (iOS)
 
-A small lock-screen widget that shows your child's most recent feeding — clock
-time, amount, and how long ago — pulled live from your Baby Buddy API.
+Small lock-screen widgets that show your child's most recent activity — clock
+time, details, and how long ago — pulled live from your Baby Buddy API.
 
-It works even though Baby Buddy is installed as a **web app (PWA)**, because it
-uses the free [**Scriptable**](https://scriptable.app/) app to call the REST API
-directly. No native app, no App Store build, no server changes.
+Two scripts are included, and they work identically:
+
+- **`BabyBuddyLastFed.js`** — most recent **feeding** (e.g. `Last fed 17:36` /
+  `30mL · 1 hr 49 min`).
+- **`BabyBuddyLastDiaper.js`** — most recent **diaper change** (e.g.
+  `Last change 17:36` / `Wet + Solid · 1 hr 49 min`).
+
+They work even though Baby Buddy is installed as a **web app (PWA)**, because they
+use the free [**Scriptable**](https://scriptable.app/) app to call the REST API
+directly. No native app, no App Store build, no server changes. Add each as its own
+widget; both read the same API key, so you can reuse the same token for both.
 
 ## What this can and can't be
 
@@ -28,7 +36,10 @@ large colored card. Tapping it opens Baby Buddy.
 2. **Get your API key:** in Baby Buddy, open **User → Settings** and copy (or
    regenerate) your **API key**.
 3. **Add the script:** open Scriptable → `+` (new script) → paste the contents of
-   [`BabyBuddyLastFed.js`](BabyBuddyLastFed.js). Rename it to `BabyBuddyLastFed`.
+   [`BabyBuddyLastFed.js`](BabyBuddyLastFed.js) (or
+   [`BabyBuddyLastDiaper.js`](BabyBuddyLastDiaper.js)). Name it to match, e.g.
+   `BabyBuddyLastFed` / `BabyBuddyLastDiaper`. For both widgets, add each as a
+   separate Scriptable script and repeat these steps.
 4. **Set your URL:** edit the `BASE_URL` constant near the top to your Baby Buddy
    address, with no trailing slash, e.g. `https://baby.example.com`.
 5. **Provide the token** (pick one — the widget Parameter is recommended and keeps
@@ -43,9 +54,9 @@ large colored card. Tapping it opens Baby Buddy.
    `Set BASE_URL`, `Set token`, or `Bad token`, fix that config and re-run.
 7. **Add to the lock screen:** lock the phone → long-press the lock screen →
    **Customize** → tap the widget area under the clock → **add a widget** →
-   **Scriptable** → choose a rectangular size → select the **BabyBuddyLastFed**
-   script. If using the Parameter method, tap the widget and paste your API key
-   into **Parameter**. Done.
+   **Scriptable** → choose a rectangular size → select the script you want
+   (**BabyBuddyLastFed** or **BabyBuddyLastDiaper**). If using the Parameter method,
+   tap the widget and paste your API key into **Parameter**. Done.
 
 ## Optional tweaks
 

@@ -22,7 +22,8 @@
 {% endblock %}
 {% block meta %}
     {% if pumping %}
-        {% blocktrans trimmed with amount=pumping.amount|floatformat:"0g" %}
+        {# One decimal place, matching how the amount reads everywhere else. #}
+        {% blocktrans trimmed with amount=pumping.amount|floatformat:"1" %}
             {{ amount }} mL
         {% endblocktrans %}
     {% endif %}

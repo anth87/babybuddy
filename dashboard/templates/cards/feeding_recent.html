@@ -4,53 +4,54 @@
     <a href="{% url "core:feeding-list" %}">{% trans "Recent Feedings" %}</a>
 {% endblock %}
 {% block title %}
-    {% if feedings|length > 0 %}
-        <div id="feeding-days-carousel"
-             class="carousel slide"
-             data-bs-interval="false">
-            <div class="carousel-inner">
-                {% for feeding in feedings %}
-                    <div class="carousel-item{% if forloop.counter == 1 %} active{% endif %}">
-                        <div class="last-feeding-method text-center">
-                            {% if feeding.total %}
-                                {% blocktrans trimmed with amount=feeding.total|floatformat:"0g" %}
-                                    {{ amount }} mL
-                                {% endblocktrans %}
-                            {% else %}
-                                {% trans "None" %}
-                            {% endif %}
-                        </div>
-                        <div class="text-center small">
-                            {% if feeding.count > 0 %}
-                                {% blocktrans trimmed count counter=feeding.count %}
-                                    {{ counter }} feeding
-                                {% plural %}
-                                    {{ counter }} feedings
-                                {% endblocktrans %}
-                            {% endif %}
-                        </div>
-                        <div class="text-center small text-body-secondary">{{ feeding.date.date|dayssince }}</div>
-                    </div>
-                {% endfor %}
-            </div>
-            {% if feedings|length > 1 %}
-                <a class="carousel-control-prev"
-                   href="#feeding-days-carousel"
-                   role="button"
-                   data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">{% trans "Previous" %}</span>
-                </a>
-                <a class="carousel-control-next"
-                   href="#feeding-days-carousel"
-                   role="button"
-                   data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">{% trans "Next" %}</span>
-                </a>
-            {% endif %}
-        </div>
-    {% else %}
+    {% if empty %}
         {% trans "None" %}
+    {% else %}
+        <div class="feeding-recent" data-feeding-chart>
+            {# Reports the selected day. Starts on today and is updated in place by the chart. #}
+            <div class="fr-readout" aria-live="polite">
+                <div class="fr-total" data-fr-total>{{ today.amount_display }}</div>
+                <div class="fr-count" data-fr-count>{{ today.count_display }}</div>
+                <div class="fr-when" data-fr-when>{{ today.date|dayssince }}</div>
+            </div>
+            <div class="fr-chart">
+                <div class="fr-row fr-counts" aria-hidden="true">
+                    {% for day in days %}
+                        <div class="fr-cell{% if day.today %} is-active{% endif %}">
+                            {% if day.count %}<span class="fr-n">{{ day.count }}</span>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="fr-row fr-bars">
+                    <div class="fr-avg" style="bottom: {{ average_percent }}%"></div>
+                    {% for day in days %}
+                        <div class="fr-cell{% if day.today %} is-active{% endif %}">
+                            <button type="button"
+                                    class="fr-hit"
+                                    aria-pressed="{{ day.today|yesno:"true,false" }}"
+                                    aria-label="{{ day.label }}"
+                                    data-total="{{ day.amount_display }}"
+                                    data-count="{{ day.count_display }}"
+                                    data-when="{{ day.date|dayssince }}">
+                                <span class="fr-bar" style="height: {{ day.percent }}%"></span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="fr-row fr-days" aria-hidden="true">
+                    {% for day in days %}
+                        <div class="fr-cell{% if day.today %} is-active{% endif %}">
+                            <span class="fr-day{% if day.today %} is-today{% endif %}">{{ day.date|date:"D"|slice:":1" }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="fr-avg-label">
+                    <span class="fr-avg-swatch" aria-hidden="true"></span>
+                    {% blocktrans trimmed with amount=average|floatformat:"0g" %}
+                        Daily average: {{ amount }} mL
+                    {% endblocktrans %}
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

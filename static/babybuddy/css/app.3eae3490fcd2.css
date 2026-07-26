@@ -13447,12 +13447,6 @@ h2 .btn-success:focus,
   align-items: flex-end;
   gap: 5px;
 }
-.feeding-recent .fr-cell {
-  display: flex;
-  flex: 1 1 0;
-  justify-content: center;
-  min-width: 0;
-}
 .feeding-recent .fr-bars {
   position: relative;
   height: 52px;
@@ -13466,6 +13460,12 @@ h2 .btn-success:focus,
   left: 0;
   border-top: 1px dashed rgba(134, 47, 231, 0.6);
   pointer-events: none;
+}
+.feeding-recent .fr-cell {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-width: 0;
 }
 .feeding-recent .fr-n {
   font-size: 10px;
@@ -13499,16 +13499,6 @@ h2 .btn-success:focus,
   background-color: #d8e0ea;
   content: "";
 }
-.feeding-recent .fr-bar {
-  display: block;
-  width: 100%;
-  max-width: 14px;
-  min-height: 3px;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #862fe7, #ebdafd);
-  opacity: 0.34;
-  transition: opacity 120ms ease;
-}
 .feeding-recent .fr-hit {
   display: flex;
   align-items: flex-end;
@@ -13531,6 +13521,16 @@ h2 .btn-success:focus,
 }
 .feeding-recent .fr-hit:hover .fr-bar {
   opacity: 0.62;
+}
+.feeding-recent .fr-bar {
+  display: block;
+  width: 100%;
+  max-width: 14px;
+  min-height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #862fe7, rgb(230.8, 213.4, 250.2));
+  opacity: 0.34;
+  transition: opacity 120ms ease;
 }
 .feeding-recent .fr-cell.is-active .fr-bar,
 .feeding-recent .fr-cell.is-active .fr-hit:hover .fr-bar {
@@ -13672,8 +13672,8 @@ h2 .btn-success:focus,
 
 @font-face {
   font-family: "babybuddy";
-  src: url("../font/babybuddy.eot?42677879");
-  src: url("../font/babybuddy.eot?42677879#iefix") format("embedded-opentype"), url("../font/babybuddy.woff2?42677879") format("woff2"), url("../font/babybuddy.woff?42677879") format("woff"), url("../font/babybuddy.ttf?42677879") format("truetype"), url("../font/babybuddy.svg?42677879#babybuddy") format("svg");
+  src: url("../font/babybuddy.3f3159e3e810.eot?42677879");
+  src: url("../font/babybuddy.3f3159e3e810.eot?42677879#iefix") format("embedded-opentype"), url("../font/babybuddy.1d55d3b08eea.woff2?42677879") format("woff2"), url("../font/babybuddy.6f39cdaae2af.woff?42677879") format("woff"), url("../font/babybuddy.00fa6f7a308d.ttf?42677879") format("truetype"), url("../font/babybuddy.a9ba7a940cd7.svg?42677879#babybuddy") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -13683,7 +13683,7 @@ h2 .btn-success:focus,
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'babybuddy';
-    src: url('../font/babybuddy.svg?42677879#babybuddy') format('svg');
+    src: url("../font/babybuddy.a9ba7a940cd7.svg?42677879#babybuddy") format('svg');
   }
 }
 */
