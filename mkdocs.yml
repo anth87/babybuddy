@@ -33,6 +33,7 @@ nav:
       - "contributing/pull-requests.md"
       - "contributing/gulp-command-reference.md"
   - "import-export.md"
+  - "backup-restore.md"
   - "api.md"
   - "mcp.md"
 theme:

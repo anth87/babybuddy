@@ -403,6 +403,18 @@ BABY_BUDDY = {
     "READ_ONLY_GROUP_NAME": "read_only",
 }
 
+# Off-site database backups
+# A daily copy of the database is uploaded to S3-compatible storage. Backups
+# are disabled unless all four of these are set. See docs/backup-restore.md.
+#
+# These are deliberately separate from the AWS_* settings above, which belong
+# to django-storages and control where uploaded photos are served from.
+
+BACKUP_S3_BUCKET = os.environ.get("BACKUP_S3_BUCKET") or ""
+BACKUP_S3_ENDPOINT_URL = os.environ.get("BACKUP_S3_ENDPOINT_URL") or ""
+BACKUP_S3_ACCESS_KEY_ID = os.environ.get("BACKUP_S3_ACCESS_KEY_ID") or ""
+BACKUP_S3_SECRET_ACCESS_KEY = os.environ.get("BACKUP_S3_SECRET_ACCESS_KEY") or ""
+
 # Home assistant specific configuration
 
 ENABLE_HOME_ASSISTANT_SUPPORT = bool(

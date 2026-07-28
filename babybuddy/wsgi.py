@@ -23,3 +23,10 @@ if getattr(settings, "SERVE_MEDIA_FROM_APP", False):
         prefix=settings.MEDIA_URL,
         autorefresh=True,
     )
+
+# Schedule the daily off-site database backup. Started here rather than from
+# AppConfig.ready() so that it only runs under the web server, and never during
+# migrate, tests or other management commands.
+from babybuddy import backup  # noqa: E402
+
+backup.start_scheduler()
