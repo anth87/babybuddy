@@ -241,14 +241,6 @@ def _seconds_until_next_run():
     return (target - now).total_seconds()
 
 
-def _is_overdue():
-    """True when there is no backup yet, or the newest is over a day old."""
-    backups = list_backups()
-    if not backups:
-        return True
-    return _now() - backups[0]["LastModified"] > datetime.timedelta(days=1)
-
-
 def _run_once(reason):
     try:
         result = run_backup()
@@ -268,7 +260,22 @@ def _scheduler_loop():
     # Catch up straight away if backups have lapsed, so that a service which
     # restarts often (or was down at the scheduled time) still gets covered.
     try:
-        overdue = _is_overdue()
+        backups = list_backups()
+        if backups:
+            age = _now() - backups[0]["LastModified"]
+            logger.info(
+                "Most recent backup is %s (%s old); %s.",
+                backups[0]["Key"],
+                str(age).split(".")[0],
+                (
+                    "backing up now"
+                    if age > datetime.timedelta(days=1)
+                    else "nothing due yet"
+                ),
+            )
+        else:
+            logger.info("No backups exist yet; backing up now.")
+        overdue = not backups or age > datetime.timedelta(days=1)
     except Exception:
         logger.exception("Could not list existing backups.")
         overdue = False
@@ -284,7 +291,26 @@ def start_scheduler():
     """Start the daily backup thread. A no-op when backups are unconfigured."""
     global _scheduler_started
 
-    if not is_configured():
+    # Configured before the guards below so that every outcome, including
+    # declining to start, says so in the logs. Silence here is indistinguishable
+    # from a broken deploy.
+    _configure_logger()
+
+    missing = [
+        name
+        for name in (
+            "BACKUP_S3_BUCKET",
+            "BACKUP_S3_ENDPOINT_URL",
+            "BACKUP_S3_ACCESS_KEY_ID",
+            "BACKUP_S3_SECRET_ACCESS_KEY",
+        )
+        if not getattr(settings, name, "")
+    ]
+    if missing:
+        logger.warning(
+            "Backups are DISABLED: %s not set.",
+            ", ".join(missing),
+        )
         return
 
     # Never schedule from a development server. Credentials in a local .env are
@@ -292,6 +318,7 @@ def start_scheduler():
     # `runserver` would quietly upload the local database into the production
     # bucket, where it would be indistinguishable from a real backup.
     if settings.DEBUG:
+        logger.warning("Backups are DISABLED because DEBUG is on.")
         return
 
     with _scheduler_lock:
@@ -299,7 +326,6 @@ def start_scheduler():
             return
         _scheduler_started = True
 
-    _configure_logger()
     threading.Thread(
         target=_scheduler_loop, name="babybuddy-backup", daemon=True
     ).start()
