@@ -145,6 +145,25 @@ class TaggableModelForm(forms.ModelForm):
     )
 
 
+class BathForm(CoreModelForm, TaggableModelForm):
+    fieldsets = [
+        {
+            "fields": ["child", "time"],
+            "layout": "required",
+        },
+        {"fields": ["notes", "tags"], "layout": "advanced"},
+    ]
+
+    class Meta:
+        model = models.Bath
+        fields = ["child", "time", "notes", "tags"]
+        widgets = {
+            "child": ChildRadioSelect,
+            "time": DateTimeInput(),
+            "notes": forms.Textarea(attrs={"rows": 5}),
+        }
+
+
 class BMIForm(CoreModelForm, TaggableModelForm):
     fieldsets = [
         {

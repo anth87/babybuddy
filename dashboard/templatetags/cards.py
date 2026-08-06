@@ -136,6 +136,30 @@ def _filter_data_age(context, keyword="end"):
     return filter
 
 
+@register.inclusion_tag("cards/bath_last.html", takes_context=True)
+def card_bath_last(context, child):
+    """
+    Information about the most recent bath.
+    :param child: an instance of the Child model.
+    :returns: a dictionary with the most recent Bath instance.
+    """
+    instance = (
+        models.Bath.objects.filter(child=child)
+        .filter(**_filter_data_age(context, "time"))
+        .order_by("-time")
+        .first()
+    )
+
+    return {
+        "type": "bath",
+        "bath": instance,
+        "status": _status(instance.time if instance else None, None),
+        "stale": _stale(instance, models.Bath, child, "time"),
+        "empty": not instance,
+        "hide_empty": _hide_empty(context),
+    }
+
+
 @register.inclusion_tag("cards/diaperchange_last.html", takes_context=True)
 def card_diaperchange_last(context, child):
     """
@@ -1086,6 +1110,40 @@ def _trend_daily_average(values):
     return sum(values[:-1]) / 6
 
 
+def _bath_recent(child, end_date=None):
+    """
+    Counts baths per day for the trends chart.
+
+    Baths have no dashboard "recent" card to borrow buckets from, so this
+    builds them directly, matching the day bucketing the other cards use.
+
+    :param child: an instance of the Child model.
+    :param end_date: a Date object for the day to filter.
+    :returns: a dict with a seven-day count series, oldest first.
+    """
+    if not end_date:
+        end_date = timezone.localtime()
+
+    end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=9999)
+    start_date = end_date - timezone.timedelta(days=7)
+
+    instances = models.Bath.objects.filter(child=child).filter(
+        time__range=[start_date, end_date]
+    )
+
+    counts = [0] * 7
+    for instance in instances:
+        bath_date = timezone.localtime(instance.time).replace(
+            hour=23, minute=59, second=59, microsecond=9999
+        )
+        index = (end_date - bath_date).days
+        if 0 <= index < 7:
+            # The series runs oldest first, the reverse of the day offset.
+            counts[6 - index] += 1
+
+    return {"counts": counts, "empty": not instances.exists()}
+
+
 def _trend_days(values, displays, headlines, sublines, lower=None):
     """
     Turn a seven-day series into bar geometry for the trends chart.
@@ -1291,6 +1349,34 @@ def card_trends(context, child):
                 % {"amount": _amount(daily_average)},
                 "interval": "",
                 "total": _("%(amount)s mL") % {"amount": _amount(sum(values))},
+                "split": False,
+            }
+        )
+
+    # Baths: how many per day.
+    bath = _bath_recent(child)
+    if not bath["empty"]:
+        values = bath["counts"]
+        displays = [str(count) for count in values]
+        headlines = [
+            ngettext("%(count)s bath", "%(count)s baths", count) % {"count": count}
+            for count in values
+        ]
+        # Nothing further to say about a bath beyond how many there were, so the
+        # subline stays empty rather than repeating the headline.
+        sublines = ["" for _count in values]
+        days, average_pct = _trend_days(values, displays, headlines, sublines)
+        daily_average = _trend_daily_average(values)
+        metrics.append(
+            {
+                "key": "bath",
+                "label": _("Baths"),
+                "days": days,
+                "average_pct": average_pct,
+                "average_label": _("Daily average: %(count)s baths")
+                % {"count": formats.number_format(daily_average, decimal_pos=1)},
+                "interval": "",
+                "total": str(int(sum(values))),
                 "split": False,
             }
         )

@@ -76,6 +76,52 @@ class TestBase:
             self.assertIsNotNone(obj.end)
 
 
+class BathAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
+    endpoint = reverse("api:bath-list")
+    model = models.Bath
+
+    def test_get(self):
+        response = self.client.get(self.endpoint)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(
+            response.data["results"][0],
+            {
+                "id": 1,
+                "child": 1,
+                "time": "2017-11-17T18:10:00-05:00",
+                "notes": "Fake bath.",
+                "tags": [],
+            },
+        )
+
+    def test_post(self):
+        data = {
+            "child": 1,
+            "time": "2017-11-18T18:10:00-05:00",
+            "notes": "New fake bath.",
+        }
+        response = self.client.post(self.endpoint, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        obj = models.Bath.objects.get(pk=response.data["id"])
+        self.assertEqual(obj.notes, data["notes"])
+
+    def test_post_null_time(self):
+        data = {
+            "child": 1,
+            "notes": "Another fake bath.",
+        }
+        response = self.client.post(self.endpoint, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        obj = models.Bath.objects.get(pk=response.data["id"])
+        self.assertEqual(obj.notes, data["notes"])
+
+    def test_patch(self):
+        endpoint = "{}{}/".format(self.endpoint, 1)
+        response = self.client.patch(endpoint, {"notes": "Updated bath notes."})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["notes"], "Updated bath notes.")
+
+
 class BMIAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
     endpoint = reverse("api:bmi-list")
     model = models.BMI

@@ -69,6 +69,27 @@ class TemplateTagsTestCase(TestCase):
             timezone.localtime().strptime("2017-11-18", "%Y-%m-%d"),
         )
 
+    def test_card_bath_last(self):
+        bath = models.Bath.objects.create(
+            child=self.child,
+            time=timezone.localtime() - timezone.timedelta(hours=3),
+        )
+
+        data = cards.card_bath_last(self.context, self.child)
+        self.assertEqual(data["type"], "bath")
+        self.assertFalse(data["empty"])
+        self.assertFalse(data["stale"])
+        self.assertEqual(data["bath"], bath)
+
+    def test_card_bath_last_stale_when_older_than_a_week(self):
+        models.Bath.objects.create(
+            child=self.child,
+            time=timezone.localtime() - timezone.timedelta(days=7, hours=1),
+        )
+
+        data = cards.card_bath_last(self.context, self.child)
+        self.assertTrue(data["stale"])
+
     def test_card_diaperchange_last(self):
         data = cards.card_diaperchange_last(self.context, self.child)
         self.assertEqual(data["type"], "diaperchange")
@@ -200,6 +221,53 @@ class TemplateTagsTestCase(TestCase):
         # today's much larger total is left out entirely.
         self.assertEqual(data["average"], round(0.25 / 6))
         self.assertEqual(data["average_percent"], 0)
+
+    def test_bath_recent_buckets_by_day(self):
+        child = models.Child.objects.create(
+            first_name="Bath", last_name="Trend", birth_date=timezone.localdate()
+        )
+        now = timezone.localtime()
+        models.Bath.objects.create(child=child, time=now - timezone.timedelta(hours=1))
+        models.Bath.objects.create(child=child, time=now - timezone.timedelta(hours=2))
+        models.Bath.objects.create(child=child, time=now - timezone.timedelta(days=3))
+        # Older than the window, so it must not appear in the series.
+        models.Bath.objects.create(child=child, time=now - timezone.timedelta(days=9))
+
+        data = cards._bath_recent(child)
+
+        self.assertFalse(data["empty"])
+        self.assertEqual(len(data["counts"]), 7)
+        # Oldest first, so today is the last bucket.
+        self.assertEqual(data["counts"][-1], 2)
+        self.assertEqual(data["counts"][3], 1)
+        self.assertEqual(sum(data["counts"]), 3)
+
+    def test_bath_recent_empty(self):
+        child = models.Child.objects.create(
+            first_name="No", last_name="Baths", birth_date=timezone.localdate()
+        )
+        data = cards._bath_recent(child)
+        self.assertTrue(data["empty"])
+
+    def test_card_trends_includes_baths(self):
+        models.Bath.objects.create(
+            child=self.child, time=timezone.localtime() - timezone.timedelta(hours=2)
+        )
+
+        data = cards.card_trends(self.context, self.child)
+        bath = [m for m in data["metrics"] if m["key"] == "bath"]
+
+        self.assertEqual(len(bath), 1)
+        self.assertEqual(bath[0]["label"], "Baths")
+        self.assertEqual(bath[0]["total"], "1")
+        self.assertEqual(len(bath[0]["days"]), 7)
+
+    def test_card_trends_omits_baths_when_none(self):
+        child = models.Child.objects.create(
+            first_name="Trendless", last_name="Child", birth_date=timezone.localdate()
+        )
+        data = cards.card_trends(self.context, child)
+        self.assertEqual([m for m in data["metrics"] if m["key"] == "bath"], [])
 
     def test_trend_daily_average_excludes_today(self):
         values = [1, 2, 3, 4, 5, 6, 100]

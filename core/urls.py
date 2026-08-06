@@ -26,6 +26,10 @@ urlpatterns = [
         "children/<str:slug>/delete/", views.ChildDelete.as_view(), name="child-delete"
     ),
     path("timeline/", views.Timeline.as_view(), name="timeline"),
+    path("baths/", views.BathList.as_view(), name="bath-list"),
+    path("baths/add/", views.BathAdd.as_view(), name="bath-add"),
+    path("baths/<int:pk>/", views.BathUpdate.as_view(), name="bath-update"),
+    path("baths/<int:pk>/delete/", views.BathDelete.as_view(), name="bath-delete"),
     path("changes/", views.DiaperChangeList.as_view(), name="diaperchange-list"),
     path("changes/add/", views.DiaperChangeAdd.as_view(), name="diaperchange-add"),
     path(

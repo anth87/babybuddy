@@ -158,6 +158,32 @@ class TaggableManager(TaggitTaggableManager):
     pass
 
 
+class Bath(models.Model):
+    model_name = "bath"
+    child = models.ForeignKey(
+        "Child", on_delete=models.CASCADE, related_name="bath", verbose_name=_("Child")
+    )
+    time = models.DateTimeField(
+        blank=False, default=timezone.localtime, null=False, verbose_name=_("Time")
+    )
+    notes = models.TextField(blank=True, null=True, verbose_name=_("Notes"))
+    tags = TaggableManager(blank=True, through=Tagged)
+
+    objects = models.Manager()
+
+    class Meta:
+        default_permissions = ("view", "add", "change", "delete")
+        ordering = ["-time"]
+        verbose_name = _("Bath")
+        verbose_name_plural = _("Baths")
+
+    def __str__(self):
+        return str(_("Bath"))
+
+    def clean(self):
+        validate_time(self.time, "time")
+
+
 class BMI(models.Model):
     model_name = "bmi"
     child = models.ForeignKey(

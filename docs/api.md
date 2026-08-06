@@ -11,6 +11,7 @@ authorization.
 Currently, the following endpoints are available for `GET`, `OPTIONS`, and
 `POST` requests:
 
+- `/api/baths/`
 - `/api/bmi/` (Body Mass Index)
 - `/api/children/`
 - `/api/changes/` (Diaper Changes)

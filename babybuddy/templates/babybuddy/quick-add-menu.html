@@ -1,4 +1,10 @@
 {% load i18n %}
+{% if perms.core.add_bath %}
+    <a class="dropdown-item p-2" href="{% url 'core:bath-add' %}">
+        <span aria-hidden="true">🛁</span>
+        {% trans "Bath" %}
+    </a>
+{% endif %}
 {% if perms.core.add_diaperchange %}
     <a class="dropdown-item p-2" href="{% url 'core:diaperchange-add' %}">
         <i class="icon-diaperchange" aria-hidden="true"></i>

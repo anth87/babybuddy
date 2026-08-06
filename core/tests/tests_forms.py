@@ -135,6 +135,46 @@ class InitialValuesTestCase(FormsTestCaseBase):
         self.assertTrue("end" not in page.context["form"].initial)
 
 
+class BathFormsTestCase(FormsTestCaseBase):
+    @classmethod
+    def setUpClass(cls):
+        super(BathFormsTestCase, cls).setUpClass()
+        cls.bath = models.Bath.objects.create(
+            child=cls.child,
+            time=timezone.localtime() - timezone.timedelta(days=2),
+        )
+
+    def test_add(self):
+        params = {
+            "child": self.child.id,
+            "time": self.localtime_string(),
+            "notes": "New bath",
+        }
+
+        page = self.c.post("/baths/add/", params, follow=True)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, "Bath entry for {} added".format(str(self.child)))
+
+    def test_edit(self):
+        params = {
+            "child": self.bath.child.id,
+            "time": self.localtime_string(self.bath.time),
+            "notes": "changed notes",
+        }
+        page = self.c.post("/baths/{}/".format(self.bath.id), params, follow=True)
+        self.assertEqual(page.status_code, 200)
+        self.bath.refresh_from_db()
+        self.assertEqual(self.bath.notes, params["notes"])
+        self.assertContains(
+            page, "Bath entry for {} updated".format(str(self.bath.child))
+        )
+
+    def test_delete(self):
+        page = self.c.post("/baths/{}/delete/".format(self.bath.id), follow=True)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, "Bath entry deleted")
+
+
 class BMIFormsTestCase(FormsTestCaseBase):
     @classmethod
     def setUpClass(cls):

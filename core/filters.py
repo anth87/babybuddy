@@ -15,6 +15,12 @@ class TagFilter(django_filters.FilterSet):
     )
 
 
+class BathFilter(TagFilter):
+    class Meta:
+        model = models.Bath
+        fields = ["child"]
+
+
 class BMIFilter(TagFilter):
     class Meta:
         model = models.BMI

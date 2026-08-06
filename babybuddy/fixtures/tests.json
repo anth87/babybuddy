@@ -21,6 +21,15 @@
     }
   },
   {
+    "model": "core.bath",
+    "pk": 1,
+    "fields": {
+      "child": 1,
+      "time": "2017-11-17T23:10:00Z",
+      "notes": "Fake bath."
+    }
+  },
+  {
     "model": "core.pumping",
     "pk": 1,
     "fields": {

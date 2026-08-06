@@ -2,11 +2,34 @@
 import datetime
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
 from core import models
+
+
+class BathTestCase(TestCase):
+    def setUp(self):
+        call_command("migrate", verbosity=0)
+        self.child = models.Child.objects.create(
+            first_name="First", last_name="Last", birth_date=timezone.localdate()
+        )
+        self.time = timezone.localtime() - timezone.timedelta(hours=2)
+        self.bath = models.Bath.objects.create(child=self.child, time=self.time)
+
+    def test_bath_create(self):
+        self.assertEqual(self.bath, models.Bath.objects.first())
+        self.assertEqual(str(self.bath), "Bath")
+        self.assertEqual(self.bath.time, self.time)
+
+    def test_bath_time_in_future(self):
+        bath = models.Bath(
+            child=self.child, time=timezone.localtime() + timezone.timedelta(hours=1)
+        )
+        with self.assertRaises(ValidationError):
+            bath.clean()
 
 
 class BMITestCase(TestCase):

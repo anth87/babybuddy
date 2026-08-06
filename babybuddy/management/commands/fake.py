@@ -104,6 +104,9 @@ class Command(BaseCommand):
         self._add_medication_entry()
         last_medication_entry_time = self.time
 
+        self._add_bath_entry()
+        last_bath_entry_time = self.time
+
         while self.time < self.time_now:
             self._add_sleep_entry()
             if choice([True, False]):
@@ -126,6 +129,9 @@ class Command(BaseCommand):
             if choice([True, False, False]):
                 self._add_medication_entry()
                 last_medication_entry_time = self.time
+            if (self.time - last_bath_entry_time).days > 1 and choice([True, False]):
+                self._add_bath_entry()
+                last_bath_entry_time = self.time
             if (self.time - last_weight_entry_time).days > 6:
                 self._add_weight_entry()
                 last_weight_entry_time = self.time
@@ -158,6 +164,26 @@ class Command(BaseCommand):
             models.Pumping.objects.create(
                 child=self.child, amount=self.amount, start=start, end=end, notes=notes
             ).save()
+
+    @transaction.atomic
+    def _add_bath_entry(self):
+        """
+        Add a Bath entry. Baths land in the evening rather than at the current
+        point in the day's cycle, which is when they usually happen.
+        :returns:
+        """
+        notes = ""
+        if choice([True, False, False, False]):
+            notes = " ".join(self.faker.sentences(randint(1, 3)))
+
+        time = self.time.replace(hour=18, minute=randint(0, 59))
+
+        if time < self.time_now:
+            instance = models.Bath.objects.create(
+                child=self.child, time=time, notes=notes
+            )
+            instance.save()
+            self._add_tags(instance)
 
     @transaction.atomic
     def _add_diaperchange_entry(self):

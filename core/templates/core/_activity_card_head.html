@@ -5,6 +5,8 @@
 
     Params:
       icon           icon-* class for the tile glyph
+      icon_text      literal glyph (e.g. an emoji) to use instead of "icon", for
+                     activities the fontello set has no icon for
       tile           optional icon tile colour modifier (e.g. babyb-activity-icon--violet)
       time           pre-rendered time string
       unique_child   when true, the child link is omitted
@@ -18,7 +20,7 @@
       can_delete / delete_url_name   show delete button and its URL name
 {% endcomment %}
 <div class="babyb-activity-card-head">
-    <span class="babyb-activity-icon {{ tile }}" aria-hidden="true"><i class="{{ icon }}"></i></span>
+    <span class="babyb-activity-icon {{ tile }}" aria-hidden="true">{% if icon_text %}{{ icon_text }}{% else %}<i class="{{ icon }}"></i>{% endif %}</span>
     <div class="babyb-activity-headmain">
         <div class="babyb-activity-time">{{ time }}</div>
         {% if child and not unique_child or has_prev or logged_by %}

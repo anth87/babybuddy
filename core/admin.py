@@ -20,6 +20,25 @@ class ImportExportResourceBase(resources.ModelResource):
         export_order = ("id", "child_id", "child_first_name", "child_last_name")
 
 
+class BathImportExportResource(ImportExportResourceBase):
+    class Meta:
+        model = models.Bath
+
+
+@admin.register(models.Bath)
+class BathAdmin(ImportExportMixin, ExportActionMixin, admin.ModelAdmin):
+    list_display = (
+        "child",
+        "time",
+    )
+    list_filter = ("child", "tags")
+    search_fields = (
+        "child__first_name",
+        "child__last_name",
+    )
+    resource_class = BathImportExportResource
+
+
 class BMIImportExportResource(ImportExportResourceBase):
     class Meta:
         model = models.BMI

@@ -16,7 +16,7 @@ type is parsed separately. Mapping to Baby Buddy models:
     Diaper         -> DiaperChange
     Growth         -> Weight AND Height
     Pump           -> Pumping
-    Bath           -> skipped (no Baby Buddy model)
+    Bath           -> Bath
 
 Every created record is tagged with ``huckleberry-import`` so a run can be
 undone with a single query. Use ``--dry-run`` to preview, and ``--wipe`` to
@@ -42,6 +42,7 @@ IMPORT_TAG = "huckleberry-import"
 
 # Models wiped by --wipe, i.e. everything the importer could plausibly touch.
 WIPEABLE_MODELS = [
+    models.Bath,
     models.Feeding,
     models.DiaperChange,
     models.Pumping,
@@ -191,7 +192,7 @@ class Command(BaseCommand):
             "weight": 0,
             "height": 0,
             "pumping": 0,
-            "bath_skipped": 0,
+            "bath": 0,
             "skipped": 0,
         }
         for line, row in enumerate(rows, start=2):
@@ -211,7 +212,8 @@ class Command(BaseCommand):
                     self._pump(child, row)
                     counts["pumping"] += 1
                 elif event_type == "Bath":
-                    counts["bath_skipped"] += 1
+                    self._bath(child, row)
+                    counts["bath"] += 1
                 else:
                     counts["skipped"] += 1
                     self.stderr.write(
@@ -326,6 +328,17 @@ class Command(BaseCommand):
         pumping.save()
         pumping.tags.add(IMPORT_TAG)
 
+    def _bath(self, child, row):
+        # Huckleberry logs a bath as a single moment, leaving End and Duration
+        # empty, which lines up with Baby Buddy's single "time" field.
+        bath = models.Bath(
+            child=child,
+            time=parse_dt(row["Start"], self.tz),
+            notes=self._clean_notes(row.get("Notes")),
+        )
+        bath.save()
+        bath.tags.add(IMPORT_TAG)
+
     @staticmethod
     def _clean_notes(value):
         value = (value or "").strip()
@@ -342,7 +355,7 @@ class Command(BaseCommand):
         self.stdout.write(f"  Weights:         {counts['weight']}")
         self.stdout.write(f"  Heights:         {counts['height']}")
         self.stdout.write(f"  Pumpings:        {counts['pumping']}")
-        self.stdout.write(f"  Baths skipped:   {counts['bath_skipped']}")
+        self.stdout.write(f"  Baths:           {counts['bath']}")
         if counts["skipped"]:
             self.stdout.write(
                 self.style.WARNING(f"  Rows skipped:    {counts['skipped']}")

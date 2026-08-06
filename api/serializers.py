@@ -108,6 +108,12 @@ class TaggableSerializer(TaggitSerializer, serializers.HyperlinkedModelSerialize
     tags = TagListSerializerField(required=False)
 
 
+class BathSerializer(CoreModelSerializer, TaggableSerializer):
+    class Meta:
+        model = models.Bath
+        fields = ("id", "child", "time", "notes", "tags")
+
+
 class BMISerializer(CoreModelSerializer, TaggableSerializer):
     class Meta:
         model = models.BMI

@@ -39,6 +39,9 @@ class ImportTestCase(TestCase):
         self.assertFalse(result.has_errors())
         self.assertEqual(model.objects.count(), count)
 
+    def test_bath(self):
+        self.import_data(models.Bath, 3)
+
     def test_bmi(self):
         self.import_data(models.BMI, 5)
 

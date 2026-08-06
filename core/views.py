@@ -78,6 +78,33 @@ class CoreDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
         }
 
 
+class BathList(PermissionRequiredMixin, BabyBuddyPaginatedView, BabyBuddyFilterView):
+    model = models.Bath
+    template_name = "core/bath_list.html"
+    permission_required = ("core.view_bath",)
+    filterset_class = filters.BathFilter
+
+
+class BathAdd(CoreAddView):
+    model = models.Bath
+    permission_required = ("core.add_bath",)
+    form_class = forms.BathForm
+    success_url = reverse_lazy("core:bath-list")
+
+
+class BathUpdate(CoreUpdateView):
+    model = models.Bath
+    permission_required = ("core.change_bath",)
+    form_class = forms.BathForm
+    success_url = reverse_lazy("core:bath-list")
+
+
+class BathDelete(CoreDeleteView):
+    model = models.Bath
+    permission_required = ("core.delete_bath",)
+    success_url = reverse_lazy("core:bath-list")
+
+
 class BMIList(PermissionRequiredMixin, BabyBuddyPaginatedView, BabyBuddyFilterView):
     model = models.BMI
     template_name = "core/bmi_list.html"
@@ -412,6 +439,7 @@ class TagAdminDetail(PermissionRequiredMixin, DetailView):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.annotate(
+            Count("bath"),
             Count("feeding"),
             Count("diaperchange"),
             Count("pumping"),

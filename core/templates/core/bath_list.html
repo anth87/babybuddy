@@ -1,0 +1,40 @@
+{% extends 'babybuddy/page.html' %}
+{% load datetime i18n widget_tweaks %}
+{% block title %}
+    {% trans "Baths" %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Baths" %}</li>
+{% endblock %}
+{% block content %}
+    <div class="babyb-list-head">
+        <h1>{% trans "Baths" %}</h1>
+        {% if perms.core.add_bath %}
+            <div class="babyb-list-actions">
+                <a href="{% url 'core:bath-add' %}" class="btn btn-primary">
+                    <span aria-hidden="true">🛁</span> {% trans "Add Bath" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    {% include 'babybuddy/filter.html' %}
+    <div class="babyb-activity-list">
+        {% for bath in object_list %}
+            <article class="babyb-activity-card">
+                {% include 'core/_activity_card_head.html' with icon_text='🛁' tile='babyb-activity-icon--indigo' time=bath.time|datetime_short unique_child=unique_child child=bath.child obj=bath can_edit=perms.core.change_bath edit_url_name='core:bath-update' can_delete=perms.core.delete_bath delete_url_name='core:bath-delete' %}
+                {% if bath.tags.all %}
+                    <div class="babyb-activity-meta">
+                        <div class="babyb-meta-block">
+                            <div class="babyb-meta-label">{% trans "Tags" %}</div>
+                            <div class="babyb-meta-chips">{% include "core/render_tag_list.html" with tags=bath.tags.all %}</div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% include 'core/_activity_card_note.html' with note=bath.notes %}
+            </article>
+        {% empty %}
+            <div class="babyb-activity-empty">{% trans "No bath entries found." %}</div>
+        {% endfor %}
+    </div>
+    {% include 'babybuddy/paginator.html' %}
+{% endblock %}

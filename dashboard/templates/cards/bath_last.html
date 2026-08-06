@@ -1,0 +1,22 @@
+{% extends 'cards/status_base.html' %}
+{% load i18n %}
+{% block link %}
+    {% url "core:bath-list" %}
+{% endblock %}
+{% block label %}
+    {% trans "Bath" %}
+{% endblock %}
+{% block value %}
+    {% if bath %}
+        {{ status.elapsed }}
+    {% else %}
+        {% trans "None" %}
+    {% endif %}
+{% endblock %}
+{% block sub %}
+    {% if bath %}
+        {% blocktrans trimmed with time=bath.time|time %}
+            ago · {{ time }}
+        {% endblocktrans %}
+    {% endif %}
+{% endblock %}

@@ -226,19 +226,34 @@
                     </div>
                 </div>
                 {% comment %} Activities group {% endcomment %}
-                <button class="babyb-drawer-group{% if '/changes' in request.path or '/feedings' in request.path or '/medication' in request.path or '/pumping' in request.path or '/sleep' in request.path or '/tummy-time' in request.path %} active{% endif %}"
+                <button class="babyb-drawer-group{% if '/baths' in request.path or '/changes' in request.path or '/feedings' in request.path or '/medication' in request.path or '/pumping' in request.path or '/sleep' in request.path or '/tummy-time' in request.path %} active{% endif %}"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#babyb-grp-activities"
-                        aria-expanded="{% if '/changes' in request.path or '/feedings' in request.path or '/medication' in request.path or '/pumping' in request.path or '/sleep' in request.path or '/tummy-time' in request.path %}true{% else %}false{% endif %}"
+                        aria-expanded="{% if '/baths' in request.path or '/changes' in request.path or '/feedings' in request.path or '/medication' in request.path or '/pumping' in request.path or '/sleep' in request.path or '/tummy-time' in request.path %}true{% else %}false{% endif %}"
                         aria-controls="babyb-grp-activities">
                     <span class="babyb-drawer-link-ico"><i class="icon-activities" aria-hidden="true"></i></span>
                     <span class="babyb-drawer-group-label">{% trans "Activities" %}</span>
                     <span class="babyb-drawer-chevron"><i class="icon-angle-right" aria-hidden="true"></i></span>
                 </button>
-                <div class="collapse{% if '/changes' in request.path or '/feedings' in request.path or '/medication' in request.path or '/pumping' in request.path or '/sleep' in request.path or '/tummy-time' in request.path %} show{% endif %}"
+                <div class="collapse{% if '/baths' in request.path or '/changes' in request.path or '/feedings' in request.path or '/medication' in request.path or '/pumping' in request.path or '/sleep' in request.path or '/tummy-time' in request.path %} show{% endif %}"
                      id="babyb-grp-activities">
                     <div class="babyb-drawer-sub">
+                        {% if perms.core.view_bath %}
+                            {% url 'core:bath-list' as u_baths %}
+                            <div class="babyb-drawer-sub-item{% if request.path == u_baths %} active{% endif %}">
+                                <a class="babyb-drawer-sub-link" href="{{ u_baths }}">
+                                    <span class="babyb-drawer-sub-ico" aria-hidden="true">🛁</span>
+                                    <span class="babyb-drawer-sub-name">{% trans "Baths" %}</span>
+                                </a>
+                                {% if perms.core.add_bath %}
+                                    <a class="babyb-drawer-sub-add"
+                                       href="{% url 'core:bath-add' %}"
+                                       title="{% trans "Add" %}"
+                                       aria-label="{% trans "Add Bath" %}"><i class="icon-add" aria-hidden="true"></i></a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                         {% if perms.core.view_diaperchange %}
                             {% url 'core:diaperchange-list' as u_changes %}
                             <div class="babyb-drawer-sub-item{% if request.path == u_changes %} active{% endif %}">

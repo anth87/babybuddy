@@ -16,7 +16,7 @@
                 <div class="babyb-event babyb-act babyb-act--{{ event.model_name }}">
             {% endif %}
                 <div class="babyb-event-time">{{ event.time|time }}</div>
-                <span class="babyb-event-mark" aria-hidden="true"><i class="icon-{{ event.model_name }}"></i></span>
+                <span class="babyb-event-mark" aria-hidden="true">{% if event.icon_text %}{{ event.icon_text }}{% else %}<i class="icon-{{ event.model_name }}"></i>{% endif %}</span>
                 <div class="babyb-event-body">
                     <div class="babyb-event-title">{{ event.event|default:event.model_name|capfirst }}</div>
                     <div class="babyb-event-detail">

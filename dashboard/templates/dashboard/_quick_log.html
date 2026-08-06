@@ -60,6 +60,12 @@
                     <span class="babyb-more-tile" aria-hidden="true"><i class="icon-tummytime"></i></span>{% trans "Tummy time" %}
                 </a>
             {% endif %}
+            {% if perms.core.add_bath %}
+                <a class="dropdown-item babyb-act babyb-act--bath"
+                   href="{% url 'core:bath-add' %}">
+                    <span class="babyb-more-tile" aria-hidden="true">🛁</span>{% trans "Bath" %}
+                </a>
+            {% endif %}
             {% if perms.core.add_temperature %}
                 <a class="dropdown-item babyb-act babyb-act--temperature"
                    href="{% url 'core:temperature-add' %}">

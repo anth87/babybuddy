@@ -134,6 +134,12 @@
     --act-ink: #5f259e;
 }
 
+.babyb-act--bath {
+    --act-rgb: 2, 132, 199;
+    --act-tint: #e0f2fe;
+    --act-ink: #0284c7;
+}
+
 .babyb-act--temperature,
 .babyb-act--weight,
 .babyb-act--note {
@@ -236,7 +242,10 @@
     gap: 12px;
 
     @media (max-width: 767.98px) {
-        grid-template-columns: 1.35fr 1fr 1fr auto;
+        // minmax(0, …) lets the tracks shrink past their labels' min-content
+        // width. Without it the row keeps a 381px floor and pushes the "More"
+        // button off the right edge on a 360px or 375px phone.
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr) auto;
         gap: 8px;
     }
 }
@@ -370,6 +379,8 @@
 
         .babyb-quick-text {
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .babyb-quick-full,

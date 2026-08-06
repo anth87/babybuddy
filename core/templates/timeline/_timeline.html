@@ -29,7 +29,7 @@
                 <div class="babyb-tl-item">
                     <span class="babyb-tl-badge model-{{ object.model_name }} type-{{ object.type|default:'event' }}"
                           aria-hidden="true">
-                        <i class="icon-{{ object.model_name }}"></i>
+                        {% if object.icon_text %}{{ object.icon_text }}{% else %}<i class="icon-{{ object.model_name }}"></i>{% endif %}
                     </span>
                     <div class="babyb-tl-card">
                         <div class="babyb-tl-top">

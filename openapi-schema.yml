@@ -3,6 +3,352 @@ info:
   title: Baby Buddy API
   version: ""
 paths:
+  /api/baths/:
+    get:
+      operationId: listBaths
+      description: ""
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+        - name: child
+          required: false
+          in: query
+          description: child
+          schema:
+            type: string
+        - name: date
+          required: false
+          in: query
+          description: DateTime
+          schema:
+            type: string
+        - name: date_max
+          required: false
+          in: query
+          description: Max. DateTime
+          schema:
+            type: string
+        - name: date_min
+          required: false
+          in: query
+          description: Min. DateTime
+          schema:
+            type: string
+        - name: tags
+          required: false
+          in: query
+          description: tag
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - count
+                  - results
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=400&limit=100
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=200&limit=100
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Bath"
+          description: ""
+      tags:
+        - api
+    post:
+      operationId: createBath
+      description: ""
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Bath"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Bath"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Bath"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bath"
+          description: ""
+      tags:
+        - api
+  /api/baths/{id}/:
+    get:
+      operationId: retrieveBath
+      description: ""
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Bath.
+          schema:
+            type: string
+        - name: child
+          required: false
+          in: query
+          description: child
+          schema:
+            type: string
+        - name: date
+          required: false
+          in: query
+          description: DateTime
+          schema:
+            type: string
+        - name: date_max
+          required: false
+          in: query
+          description: Max. DateTime
+          schema:
+            type: string
+        - name: date_min
+          required: false
+          in: query
+          description: Min. DateTime
+          schema:
+            type: string
+        - name: tags
+          required: false
+          in: query
+          description: tag
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bath"
+          description: ""
+      tags:
+        - api
+    put:
+      operationId: updateBath
+      description: ""
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Bath.
+          schema:
+            type: string
+        - name: child
+          required: false
+          in: query
+          description: child
+          schema:
+            type: string
+        - name: date
+          required: false
+          in: query
+          description: DateTime
+          schema:
+            type: string
+        - name: date_max
+          required: false
+          in: query
+          description: Max. DateTime
+          schema:
+            type: string
+        - name: date_min
+          required: false
+          in: query
+          description: Min. DateTime
+          schema:
+            type: string
+        - name: tags
+          required: false
+          in: query
+          description: tag
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Bath"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Bath"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Bath"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bath"
+          description: ""
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateBath
+      description: ""
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Bath.
+          schema:
+            type: string
+        - name: child
+          required: false
+          in: query
+          description: child
+          schema:
+            type: string
+        - name: date
+          required: false
+          in: query
+          description: DateTime
+          schema:
+            type: string
+        - name: date_max
+          required: false
+          in: query
+          description: Max. DateTime
+          schema:
+            type: string
+        - name: date_min
+          required: false
+          in: query
+          description: Min. DateTime
+          schema:
+            type: string
+        - name: tags
+          required: false
+          in: query
+          description: tag
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Bath"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Bath"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Bath"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bath"
+          description: ""
+      tags:
+        - api
+    delete:
+      operationId: destroyBath
+      description: ""
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this Bath.
+          schema:
+            type: string
+        - name: child
+          required: false
+          in: query
+          description: child
+          schema:
+            type: string
+        - name: date
+          required: false
+          in: query
+          description: DateTime
+          schema:
+            type: string
+        - name: date_max
+          required: false
+          in: query
+          description: Max. DateTime
+          schema:
+            type: string
+        - name: date_min
+          required: false
+          in: query
+          description: Min. DateTime
+          schema:
+            type: string
+        - name: tags
+          required: false
+          in: query
+          description: tag
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+      responses:
+        "204":
+          description: ""
+      tags:
+        - api
   /api/bmi/:
     get:
       operationId: listBMIs
@@ -5619,6 +5965,26 @@ paths:
         - api
 components:
   schemas:
+    Bath:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        child:
+          type: integer
+        time:
+          type: string
+          format: date-time
+        notes:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+      required:
+        - child
     BMI:
       type: object
       properties:

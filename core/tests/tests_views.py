@@ -31,6 +31,18 @@ class ViewsTestCase(TestCase):
 
         cls.c.login(**cls.credentials)
 
+    def test_bath_views(self):
+        page = self.c.get("/baths/")
+        self.assertEqual(page.status_code, 200)
+        page = self.c.get("/baths/add/")
+        self.assertEqual(page.status_code, 200)
+
+        entry = models.Bath.objects.first()
+        page = self.c.get("/baths/{}/".format(entry.id))
+        self.assertEqual(page.status_code, 200)
+        page = self.c.get("/baths/{}/delete/".format(entry.id))
+        self.assertEqual(page.status_code, 200)
+
     def test_bmi_views(self):
         page = self.c.get("/bmi/")
         self.assertEqual(page.status_code, 200)
@@ -220,6 +232,13 @@ class ViewsTestCase(TestCase):
         )
         response = self.c.get("/timeline/")
         self.assertEqual(response.status_code, 200)
+
+    def test_child_timeline_displays_baths(self):
+        child = models.Child.objects.first()
+        models.Bath.objects.create(child=child, time=timezone.localtime())
+
+        response = self.c.get("/children/{}/".format(child.slug))
+        self.assertContains(response, "{} had a bath.".format(child.first_name))
 
     def test_child_timeline_displays_activity_logger(self):
         child = models.Child.objects.first()

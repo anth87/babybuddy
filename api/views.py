@@ -12,6 +12,14 @@ from babybuddy import models as babybuddy_models
 from . import serializers, filters
 
 
+class BathViewSet(viewsets.ModelViewSet):
+    queryset = models.Bath.objects.all()
+    serializer_class = serializers.BathSerializer
+    filterset_class = filters.BathFilter
+    ordering_fields = ("time",)
+    ordering = "-time"
+
+
 class BMIViewSet(viewsets.ModelViewSet):
     queryset = models.BMI.objects.all()
     serializer_class = serializers.BMISerializer

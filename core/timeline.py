@@ -6,6 +6,7 @@ from django.utils import formats, timezone, timesince
 from django.utils.translation import gettext as _
 
 from core.models import (
+    Bath,
     DiaperChange,
     Feeding,
     Note,
@@ -28,6 +29,7 @@ def get_objects(date, child=None):
     max_date = date.replace(hour=23, minute=59, second=59)
     events = []
 
+    _add_baths(min_date, max_date, events, child)
     _add_diaper_changes(min_date, max_date, events, child)
     _add_feedings(min_date, max_date, events, child)
     _add_medication(min_date, max_date, events, child)
@@ -270,6 +272,31 @@ def _add_medication(min_date, max_date, events, child):
                     "tags": instance.tags.all(),
                 }
             )
+
+
+def _add_baths(min_date, max_date, events, child):
+    instances = Bath.objects.filter(time__range=(min_date, max_date)).order_by("-time")
+    if child:
+        instances = instances.filter(child=child)
+    for instance in instances:
+        details = []
+        if instance.notes:
+            details.append(instance.notes)
+        events.append(
+            {
+                "time": timezone.localtime(instance.time),
+                "event": _("%(child)s had a bath.")
+                % {
+                    "child": instance.child.first_name,
+                },
+                "details": details,
+                "edit_link": reverse("core:bath-update", args=[instance.id]),
+                "model_name": instance.model_name,
+                # The fontello set has no bath glyph; fall back to an emoji.
+                "icon_text": "🛁",
+                "tags": instance.tags.all(),
+            }
+        )
 
 
 def _add_notes(min_date, max_date, events, child):
