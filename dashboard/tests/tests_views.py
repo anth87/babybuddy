@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+import re
+
 from django.test import TestCase
 from django.test import Client as HttpClient
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.urls import reverse
+from django.utils import timezone
 
 from faker import Faker
 
-from core.models import Child
+from core.models import Child, Note
 
 
 class ViewsTestCase(TestCase):
@@ -42,8 +46,19 @@ class ViewsTestCase(TestCase):
         self.assertEqual(page.url, "/children/{}/dashboard/".format(child.slug))
         # Test the actual child dashboard (including cards).
         # TODO: Test cards more granularly.
+        note = Note.objects.create(
+            child=child,
+            note="Dashboard event",
+            time=timezone.now(),
+        )
         page = self.c.get("/children/{}/dashboard/".format(child.slug))
         self.assertEqual(page.status_code, 200)
+        edit_link = reverse("core:note-update", args=[note.id])
+        self.assertRegex(
+            page.content.decode(),
+            rf'<a class="babyb-event babyb-act babyb-act--note"\s+'
+            rf'href="{re.escape(edit_link)}">',
+        )
 
         Child.objects.create(
             first_name="Second", last_name="Child", birth_date="2000-01-01"

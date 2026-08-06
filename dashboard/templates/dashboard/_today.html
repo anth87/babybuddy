@@ -9,7 +9,12 @@
     </div>
     <div class="babyb-events">
         {% for event in timeline_objects %}
-            <div class="babyb-event babyb-act babyb-act--{{ event.model_name }}">
+            {% if event.edit_link %}
+                <a class="babyb-event babyb-act babyb-act--{{ event.model_name }}"
+                   href="{{ event.edit_link }}">
+            {% else %}
+                <div class="babyb-event babyb-act babyb-act--{{ event.model_name }}">
+            {% endif %}
                 <div class="babyb-event-time">{{ event.time|time }}</div>
                 <span class="babyb-event-mark" aria-hidden="true"><i class="icon-{{ event.model_name }}"></i></span>
                 <div class="babyb-event-body">
@@ -29,11 +34,13 @@
                     </div>
                 </div>
                 {% if event.edit_link %}
-                    <a class="babyb-event-edit"
-                       href="{{ event.edit_link }}"
-                       aria-label="{% trans "Edit entry" %}"><i class="icon-update" aria-hidden="true"></i></a>
+                    <span class="babyb-event-edit" aria-hidden="true"><i class="icon-update"></i></span>
                 {% endif %}
-            </div>
+                {% if event.edit_link %}
+                    </a>
+                {% else %}
+                    </div>
+                {% endif %}
         {% empty %}
             <p class="babyb-empty">{% trans "Nothing logged yet today." %}</p>
         {% endfor %}

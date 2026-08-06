@@ -22,6 +22,7 @@ jobs:
       - run: gulp lint
       - run: gulp coverage
       - name: Submit results to Coveralls
+        if: github.repository == 'babybuddy/babybuddy'
         uses: AndreMiras/coveralls-python-action@develop
         with:
           github-token: ${{ secrets.github_token }}
@@ -29,6 +30,7 @@ jobs:
           parallel: true
   coveralls-finish:
     needs: test
+    if: github.repository == 'babybuddy/babybuddy'
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished

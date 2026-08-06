@@ -45,7 +45,7 @@ large colored card. Tapping it opens Baby Buddy.
 5. **Provide the token** (pick one — the widget Parameter is recommended and keeps
    the key out of the script body):
    - **Widget Parameter (recommended):** leave `API_TOKEN` blank; you'll paste the
-     key into the widget's *Parameter* field in step 7.
+     key into the widget's _Parameter_ field in step 7.
    - **Keychain:** run this once in Scriptable to store it, then delete the line:
      `Keychain.set("babybuddy_api_token", "YOUR_KEY")`.
    - **Inline (least secure):** set `API_TOKEN = "YOUR_KEY"` in the script. Don't
@@ -86,6 +86,6 @@ You should get `{"count": …, "results": [{"start": …, "amount": …, …}]}`
   only
   refetches on **iOS's refresh cadence** (typically several minutes to ~15 min), so a
   brand-new feeding may take a few minutes to appear.
-- A widget is a **single tap target** — it can show data *or* act as one button,
+- A widget is a **single tap target** — it can show data _or_ act as one button,
   not both. An inline `+` button alongside live data requires a native Live
   Activity (see above).
