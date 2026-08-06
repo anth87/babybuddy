@@ -167,6 +167,14 @@ class Bath(models.Model):
         blank=False, default=timezone.localtime, null=False, verbose_name=_("Time")
     )
     notes = models.TextField(blank=True, null=True, verbose_name=_("Notes"))
+    logged_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="logged_baths",
+        verbose_name=_("Logged by"),
+    )
     tags = TaggableManager(blank=True, through=Tagged)
 
     objects = models.Manager()

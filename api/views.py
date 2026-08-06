@@ -19,6 +19,9 @@ class BathViewSet(viewsets.ModelViewSet):
     ordering_fields = ("time",)
     ordering = "-time"
 
+    def perform_create(self, serializer):
+        serializer.save(logged_by=self.request.user)
+
 
 class BMIViewSet(viewsets.ModelViewSet):
     queryset = models.BMI.objects.all()

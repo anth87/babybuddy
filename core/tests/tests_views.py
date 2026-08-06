@@ -235,10 +235,13 @@ class ViewsTestCase(TestCase):
 
     def test_child_timeline_displays_baths(self):
         child = models.Child.objects.first()
-        models.Bath.objects.create(child=child, time=timezone.localtime())
+        models.Bath.objects.create(
+            child=child, time=timezone.localtime(), logged_by=self.user
+        )
 
         response = self.c.get("/children/{}/".format(child.slug))
         self.assertContains(response, "{} had a bath.".format(child.first_name))
+        self.assertContains(response, "Logged by {}".format(self.user.username))
 
     def test_child_timeline_displays_activity_logger(self):
         child = models.Child.objects.first()

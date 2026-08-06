@@ -21,7 +21,7 @@
     <div class="babyb-activity-list">
         {% for bath in object_list %}
             <article class="babyb-activity-card">
-                {% include 'core/_activity_card_head.html' with icon_text='🛁' tile='babyb-activity-icon--indigo' time=bath.time|datetime_short unique_child=unique_child child=bath.child obj=bath can_edit=perms.core.change_bath edit_url_name='core:bath-update' can_delete=perms.core.delete_bath delete_url_name='core:bath-delete' %}
+                {% include 'core/_activity_card_head.html' with icon_text='🛁' tile='babyb-activity-icon--indigo' time=bath.time|datetime_short unique_child=unique_child child=bath.child logged_by=bath.logged_by obj=bath can_edit=perms.core.change_bath edit_url_name='core:bath-update' can_delete=perms.core.delete_bath delete_url_name='core:bath-delete' %}
                 {% if bath.tags.all %}
                     <div class="babyb-activity-meta">
                         <div class="babyb-meta-block">

@@ -154,6 +154,8 @@ class BathFormsTestCase(FormsTestCaseBase):
         page = self.c.post("/baths/add/", params, follow=True)
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "Bath entry for {} added".format(str(self.child)))
+        # CoreAddView stamps the logged-in user onto models that track it.
+        self.assertEqual(models.Bath.objects.get(notes="New bath").logged_by, self.user)
 
     def test_edit(self):
         params = {

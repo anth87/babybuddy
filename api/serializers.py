@@ -109,9 +109,11 @@ class TaggableSerializer(TaggitSerializer, serializers.HyperlinkedModelSerialize
 
 
 class BathSerializer(CoreModelSerializer, TaggableSerializer):
+    logged_by = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = models.Bath
-        fields = ("id", "child", "time", "notes", "tags")
+        fields = ("id", "child", "time", "notes", "logged_by", "tags")
 
 
 class BMISerializer(CoreModelSerializer, TaggableSerializer):

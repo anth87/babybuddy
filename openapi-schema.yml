@@ -5979,6 +5979,10 @@ components:
         notes:
           type: string
           nullable: true
+        logged_by:
+          type: string
+          readOnly: true
+          nullable: true
         tags:
           type: array
           items:

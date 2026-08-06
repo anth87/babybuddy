@@ -90,6 +90,7 @@ class BathAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
                 "child": 1,
                 "time": "2017-11-17T18:10:00-05:00",
                 "notes": "Fake bath.",
+                "logged_by": None,
                 "tags": [],
             },
         )
@@ -104,6 +105,9 @@ class BathAPITestCase(TestBase.BabyBuddyAPITestCaseBase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         obj = models.Bath.objects.get(pk=response.data["id"])
         self.assertEqual(obj.notes, data["notes"])
+        # The API records who created the entry, matching the web add view.
+        self.assertEqual(obj.logged_by.username, "admin")
+        self.assertEqual(response.data["logged_by"], "admin")
 
     def test_post_null_time(self):
         data = {

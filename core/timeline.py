@@ -294,6 +294,7 @@ def _add_baths(min_date, max_date, events, child):
                 "model_name": instance.model_name,
                 # The fontello set has no bath glyph; fall back to an emoji.
                 "icon_text": "🛁",
+                "logged_by": instance.logged_by,
                 "tags": instance.tags.all(),
             }
         )
