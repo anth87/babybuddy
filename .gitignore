@@ -26,6 +26,16 @@
 # Django media root directory.
 /media
 
+# Databases and their backups. These hold real activity data, password hashes
+# and API tokens, so they must never be committed. `restoredb --output` writes
+# into the repository root by default, which is what these patterns catch.
+*.sqlite3
+*.sqlite3.gz
+*.sqlite3.dev-backup
+
+# Server and build logs.
+*.log
+
 # Pipfile.lock.
 # Committing this file makes it difficult to support multiple Python versions as
 # requirements can different between versions, but the Pipfile only supports
