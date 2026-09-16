@@ -1,6 +1,7 @@
-{% load i18n widget_tweaks %}
+{% load babybuddy i18n widget_tweaks %}
 {# Load any form-javascript files #}
 {{ form.media.js }}
+{% delete_url object as object_delete_url %}
 <div class="container-fluid pb-5 babyb-form-wrap">
     <form role="form"
           class="babyb-form-card"
@@ -20,5 +21,40 @@
             {% endfor %}
         {% endif %}
         <button type="submit" class="submit-primary btn btn-primary btn-lg">{% trans "Submit" %}</button>
+        {% if object_delete_url %}
+            <button type="button"
+                    class="delete-secondary btn btn-outline-danger btn-lg"
+                    data-bs-toggle="modal"
+                    data-bs-target="#delete-confirm-modal">{% trans "Delete" %}</button>
+        {% endif %}
     </form>
+    {% if object_delete_url %}
+        <div class="modal fade"
+             id="delete-confirm-modal"
+             tabindex="-1"
+             aria-labelledby="delete-confirm-modal-title"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="delete-confirm-modal-title">{% trans "Delete" %}</h4>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="{% trans "Close" %}"></button>
+                    </div>
+                    <div class="modal-body">{% confirm_delete_text object %}</div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-default"
+                                data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <form role="form" method="post" action="{{ object_delete_url }}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </div>

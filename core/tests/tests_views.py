@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.core.management import call_command
 from django.test import TestCase
 from django.test import Client as HttpClient
@@ -311,3 +312,55 @@ class ViewsTestCase(TestCase):
         self.assertEqual(page.status_code, 200)
         page = self.c.get("/weight/{}/delete/".format(entry.id))
         self.assertEqual(page.status_code, 200)
+
+
+class UpdateViewDeleteActionTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(UpdateViewDeleteActionTestCase, cls).setUpClass()
+        fake = Faker()
+        call_command("migrate", verbosity=0)
+        call_command("fake", verbosity=0)
+
+        cls.c = HttpClient()
+
+        fake_user = fake.simple_profile()
+        cls.credentials = {
+            "username": fake_user["username"],
+            "password": fake.password(),
+        }
+        cls.user = get_user_model().objects.create_user(
+            is_superuser=True, **cls.credentials
+        )
+
+        cls.c.login(**cls.credentials)
+
+    def test_update_view_includes_delete_action(self):
+        entry = models.Feeding.objects.first()
+        page = self.c.get("/feedings/{}/".format(entry.id))
+        self.assertContains(page, 'action="/feedings/{}/delete/"'.format(entry.id))
+        self.assertContains(page, 'id="delete-confirm-modal"')
+
+    def test_add_view_excludes_delete_action(self):
+        page = self.c.get("/feedings/add/")
+        self.assertNotContains(page, 'id="delete-confirm-modal"')
+
+    def test_child_update_view_excludes_delete_action(self):
+        """Children use a separate confirmation form for deletion."""
+        child = models.Child.objects.first()
+        page = self.c.get("/children/{}/edit/".format(child.slug))
+        self.assertNotContains(page, 'id="delete-confirm-modal"')
+
+    def test_delete_action_requires_permission(self):
+        entry = models.Feeding.objects.first()
+        read_only = get_user_model().objects.create_user(
+            username="readonly-delete-action", password="readonly"
+        )
+        read_only.user_permissions.add(
+            Permission.objects.get(codename="change_feeding")
+        )
+        c = HttpClient()
+        c.login(username="readonly-delete-action", password="readonly")
+        page = c.get("/feedings/{}/".format(entry.id))
+        self.assertEqual(page.status_code, 200)
+        self.assertNotContains(page, 'id="delete-confirm-modal"')

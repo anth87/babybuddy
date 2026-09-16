@@ -100,6 +100,16 @@
     z-index: 1030;
 }
 
+// Delete action, shown alongside the submit button on update forms.
+.delete-secondary {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px 26px;
+    font-size: 15px;
+    border-radius: $btn-border-radius;
+}
+
 // Tweak padding on form field help blocks.
 .help-block {
     ul {
@@ -118,6 +128,13 @@
         padding: 13px 26px;
         font-size: 15px;
         position: relative;
+    }
+
+    .delete-secondary {
+        display: inline-block;
+        width: auto;
+        margin-top: 0;
+        margin-left: 12px;
     }
 }
 

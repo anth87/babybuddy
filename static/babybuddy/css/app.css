@@ -11936,6 +11936,15 @@ textarea.form-control-lg {
   z-index: 1030;
 }
 
+.delete-secondary {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px 26px;
+  font-size: 15px;
+  border-radius: 0.75rem;
+}
+
 .help-block ul {
   padding-left: 1rem;
   padding-bottom: 0;
@@ -11950,6 +11959,12 @@ textarea.form-control-lg {
     padding: 13px 26px;
     font-size: 15px;
     position: relative;
+  }
+  .delete-secondary {
+    display: inline-block;
+    width: auto;
+    margin-top: 0;
+    margin-left: 12px;
   }
 }
 @media (max-width: 767.98px) {
