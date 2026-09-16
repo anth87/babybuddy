@@ -45,9 +45,7 @@
                     </div>
                     <div class="modal-body">{% confirm_delete_text object %}</div>
                     <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-default"
-                                data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
                         <form role="form" method="post" action="{{ object_delete_url }}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
